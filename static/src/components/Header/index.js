@@ -7,8 +7,8 @@ import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import LeftNav from 'material-ui/Drawer';
+import BackIcon from '@material-ui/icons/arrowBack';
+// import LeftNav from 'material-ui/Drawer';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
@@ -94,21 +94,16 @@ class Header extends React.Component {
     render() {
         return (
             <div className={this.props.classes.root}>
-                <AppBar
-                  title="React-Redux-Flask"
-                  onLeftIconButtonTouchTap={() => this.openNav()}
-                  iconElementRight={
-                      <Button variant="flat" label="Home" onClick={() => this.dispatchNewRoute('/')} />
-                    }
-                />
               <AppBar position="static">
                 <Toolbar>
-                  <IconButton className={this.props.classes.menuButton} color="inherit" aria-label="Menu">
-                    <MenuIcon />
+                  <IconButton className={this.props.classes.menuButton} color="inherit">
+                    <BackIcon />
                   </IconButton>
                   <Typography variant="title" color="inherit" className={this.props.classes.flex}>
-                    {'Title'}
+                    {this.props.title || 'Carbos'}
                   </Typography>
+                  <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/Login')}>Login</Button>
+                  <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/Register')}>Register</Button>
                   <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/')}>Home</Button>
                 </Toolbar>
               </AppBar>
