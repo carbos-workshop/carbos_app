@@ -8,7 +8,11 @@ import { Footer } from '../../components/Footer';
 /* global styles for app */
 import './styles/app.scss';
 
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+    typography: {
+        htmlFontSize: 10,
+    },
+});
 
 class App extends React.Component { // eslint-disable-line react/prefer-stateless-function
     static propTypes = {

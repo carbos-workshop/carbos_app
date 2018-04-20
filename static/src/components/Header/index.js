@@ -1,14 +1,32 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
+import { withStyles } from 'material-ui/styles';
 import { bindActionCreators } from 'redux';
 import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import IconButton from 'material-ui/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 import LeftNav from 'material-ui/Drawer';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 
 import * as actionCreators from '../../actions/auth';
+
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+  flex: {
+    flex: 1,
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20,
+  },
+};
 
 function mapStateToProps(state) {
     return {
@@ -23,7 +41,10 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-export class Header extends Component {
+@withStyles(styles)
+class Header extends React.Component {
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -47,6 +68,14 @@ export class Header extends Component {
         });
     }
 
+    handleMenu(event) {
+        this.setState({ anchorEl: event.currentTarget });
+      };
+
+    handleClose() {
+      this.setState({ anchorEl: null });
+    };
+
 
     logout(e) {
         e.preventDefault();
@@ -64,31 +93,7 @@ export class Header extends Component {
 
     render() {
         return (
-            <header>
-                <LeftNav open={this.state.open}>
-                    {
-                        !this.props.isAuthenticated ?
-                            <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/login')}>
-                                    Login
-                                </MenuItem>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/register')}>
-                                    Register
-                                </MenuItem>
-                            </div>
-                            :
-                            <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/analytics')}>
-                                    Analytics
-                                </MenuItem>
-                                <Divider />
-
-                                <MenuItem onClick={(e) => this.logout(e)}>
-                                    Logout
-                                </MenuItem>
-                            </div>
-                    }
-                </LeftNav>
+            <div className={this.props.classes.root}>
                 <AppBar
                   title="React-Redux-Flask"
                   onLeftIconButtonTouchTap={() => this.openNav()}
@@ -96,7 +101,18 @@ export class Header extends Component {
                       <Button variant="flat" label="Home" onClick={() => this.dispatchNewRoute('/')} />
                     }
                 />
-            </header>
+              <AppBar position="static">
+                <Toolbar>
+                  <IconButton className={this.props.classes.menuButton} color="inherit" aria-label="Menu">
+                    <MenuIcon />
+                  </IconButton>
+                  <Typography variant="title" color="inherit" className={this.props.classes.flex}>
+                    {'Title'}
+                  </Typography>
+                  <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/')}>Home</Button>
+                </Toolbar>
+              </AppBar>
+            </div>
 
         );
     }
@@ -106,3 +122,5 @@ Header.propTypes = {
     logoutAndRedirect: React.PropTypes.func,
     isAuthenticated: React.PropTypes.bool,
 };
+
+export { Header };
