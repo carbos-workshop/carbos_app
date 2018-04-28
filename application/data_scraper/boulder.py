@@ -1,5 +1,6 @@
 import json
 import requests
+import pandas as pd
 
 # Boulder parcel data
 def get_parcel_data():
@@ -38,5 +39,33 @@ def get_tree_data():
     properties = [feature['properties'] for feature in features]  # list of dictionaries
 
     return properties
+
+
+def get_building_data():
+
+    # Data is in GeoJSON format
+    url = "https://www-static.bouldercolorado.gov/docs/opendata/BuildingFootprints.GeoJSON?_ga=2.17976185.1507132045.1524847957-674020513.1524847957"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        print('Error with request to boulder parcel data')
+        print('Error was ' + str(response.status_code))
+    else:
+        data = response.json()
+
+    features = data['features']  # list of dictionariesf
+    properties = [feature['properties'] for feature in features]  # list of dictionaries
+
+    return properties
+
+
+def get_tree_species_data():
+
+    # Data is in csv format
+    # data is on data.world
+    urban = pd.read_csv('https://query.data.world/s/5pr54kshtnjwbko6xt5flzfdnkc2xq')
+    rural = pd.read_csv('https://query.data.world/s/xqyr5wrirr2i354un4yvmz2dghio4v')
+
+
 
 
