@@ -1,8 +1,10 @@
 from flask import request, render_template, jsonify, url_for, redirect, g
-from .models import User
+from .models import User, Parcel, Tree
 from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
+
+from application.data_scraper.boulder import get_parcel_data, get_tree_data
 
 
 @app.route('/', methods=['GET'])
@@ -62,3 +64,27 @@ def is_token_valid():
         return jsonify(token_is_valid=True)
     else:
         return jsonify(token_is_valid=False), 403
+
+
+@app.route("/scrape_parcels", methods=["GET"])
+def scrape_the_parcels():
+    data = get_parcel_data()
+    for row in data:
+        parcel = Parcel()
+        parcel.ASR_ID = row['ASR_ID']
+        parcel.AREASQFT = row['AREASQFT']
+        db.session.add(parcel)
+    db.session.commit()
+    return 'hi there'
+
+@app.route("/scrape_trees", methods=["GET"])
+def scrape_the_trees():
+    data = get_tree_data()
+    for row in data:
+        tree = Tree()
+        tree.ADDRESS = row['ADDRESS']
+        tree.UNIQUEID = row['UNIQUEID']
+        db.session.add(tree)
+    db.session.commit()
+    return 'hello there'
+
