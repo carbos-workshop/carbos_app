@@ -1,5 +1,6 @@
 import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { red, yellow, grey } from 'material-ui/colors';
 
 /* application components */
 import { Header } from '../../components/Header';
@@ -9,6 +10,19 @@ import { Footer } from '../../components/Footer';
 import './styles/app.scss';
 
 const theme = createMuiTheme({
+    palette: {
+        type: 'dark',
+        primary: red,
+        secondary: grey,
+        error: yellow,
+        // Used by `getContrastText()` to maximize the contrast between the background and
+        // the text.
+        contrastThreshold: 3,
+        // Used to shift a color's luminance by approximately
+        // two indexes within its tonal palette.
+        // E.g., shift from Red 500 to Red 300 or Red 700.
+        tonalOffset: 0.2,
+    },
     typography: {
         htmlFontSize: 10,
     },
