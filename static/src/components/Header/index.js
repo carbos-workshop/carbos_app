@@ -1,32 +1,14 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
 import { bindActionCreators } from 'redux';
 import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import BackIcon from '@material-ui/icons/arrowBack';
-// import LeftNav from 'material-ui/Drawer';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Button from 'material-ui/Button';
+import LeftNav from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
+import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 
 import * as actionCreators from '../../actions/auth';
-
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-};
 
 function mapStateToProps(state) {
     return {
@@ -41,10 +23,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-@withStyles(styles)
-class Header extends React.Component {
-
-
+export class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -68,14 +47,6 @@ class Header extends React.Component {
         });
     }
 
-    handleMenu(event) {
-        this.setState({ anchorEl: event.currentTarget });
-      };
-
-    handleClose() {
-      this.setState({ anchorEl: null });
-    };
-
 
     logout(e) {
         e.preventDefault();
@@ -92,22 +63,42 @@ class Header extends React.Component {
     }
 
     render() {
+
+
         return (
-            <div className={this.props.classes.root}>
-              <AppBar position="static">
-                <Toolbar>
-                  <IconButton className={this.props.classes.menuButton} color="inherit">
-                    <BackIcon />
-                  </IconButton>
-                  <Typography variant="title" color="inherit" className={this.props.classes.flex}>
-                    {this.props.title || 'Carbos'}
-                  </Typography>
-                  <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/Login')}>Login</Button>
-                  <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/Register')}>Register</Button>
-                  <Button variant="flat" color="inherit" onClick={() => this.dispatchNewRoute('/')}>Home</Button>
-                </Toolbar>
-              </AppBar>
-            </div>
+            <header>
+                <LeftNav open={this.state.open}>
+                    {
+                        !this.props.isAuthenticated ?
+                            <div>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/login')}>
+                                    Login
+                                </MenuItem>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/register')}>
+                                    Register
+                                </MenuItem>
+                            </div>
+                            :
+                            <div>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/analytics')}>
+                                    Analytics
+                                </MenuItem>
+                                <Divider />
+
+                                <MenuItem onClick={(e) => this.logout(e)}>
+                                    Logout
+                                </MenuItem>
+                            </div>
+                    }
+                </LeftNav>
+                <AppBar
+                  title="React-Redux-Flask"
+                  onLeftIconButtonTouchTap={() => this.openNav()}
+                  iconElementRight={
+                      <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                    }
+                />
+            </header>
 
         );
     }
@@ -117,5 +108,3 @@ Header.propTypes = {
     logoutAndRedirect: React.PropTypes.func,
     isAuthenticated: React.PropTypes.bool,
 };
-
-export { Header };

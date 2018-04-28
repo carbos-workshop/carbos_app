@@ -4,7 +4,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import * as actionCreators from '../actions/auth';
 import { validateEmail } from '../utils/misc';
@@ -128,31 +128,29 @@ export default class LoginView extends React.Component {
 
                             <div className="col-md-12">
                                 <TextField
-                                  placeholder="Email"
-                                  label="Email"
+                                  hintText="Email"
+                                  floatingLabelText="Email"
                                   type="email"
-                                  error={this.state.email_error_text}
+                                  errorText={this.state.email_error_text}
                                   onChange={(e) => this.changeValue(e, 'email')}
                                 />
                             </div>
                             <div className="col-md-12">
                                 <TextField
-                                  placeholder="Password"
-                                  label="Password"
+                                  hintText="Password"
+                                  floatingLabelText="Password"
                                   type="password"
-                                  error={this.state.password_error_text}
+                                  errorText={this.state.password_error_text}
                                   onChange={(e) => this.changeValue(e, 'password')}
                                 />
                             </div>
 
-                            <Button
-                              variant="raised"
+                            <RaisedButton
                               disabled={this.state.disabled}
                               style={{ marginTop: 50 }}
                               label="Submit"
-                              onClick={(e) => this.login(e)}>
-                              Submit
-                            </Button>
+                              onClick={(e) => this.login(e)}
+                            />
 
                         </div>
                     </form>
