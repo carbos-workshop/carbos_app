@@ -13,6 +13,7 @@ import './styles/login.scss';
 
 const getDarkTheme = () => {
   let overwrites = {
+  	"fontFamily": 'Oxygen, sans-serif',
     "palette": {
         "primary1Color": Colors.red400,
         "primary2Color": Colors.red500,
@@ -29,7 +30,7 @@ const getDarkTheme = () => {
         "primaryTextColor": Colors.white
     },
     "textField": {
-        "errorColor": Colors.yellow500
+        // "errorColor": Colors.yellow500
     },
     "snackbar": {
         "textColor": Colors.red500,
@@ -42,13 +43,14 @@ const getDarkTheme = () => {
 
 const getLightTheme = () => {
   let overwrites = {
+  	"fontFamily": 'Oxygen, sans-serif',
     "tabs": {
         "textColor": Colors.red400,
         "selectedTextColor": Colors.red500,
         "backgroundColor": Colors.white
     },
     "textField": {
-        "errorColor": Colors.red800
+        "errorColor": Colors.red500
     },
     "snackbar": {
         "textColor": Colors.white,

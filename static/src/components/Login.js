@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ExploreIcon from 'material-ui/svg-icons/action/explore';
 import Paper from 'material-ui/Paper';
 import * as actionCreators from '../actions/auth';
 import { validateEmail } from '../utils/misc';
@@ -143,6 +145,11 @@ export default class Login extends React.Component {
                           onClick={(e) => {console.log('swap to singup view')}}
                         />
                     </div>
+				</div>
+				<div className="fab-container">
+					<FloatingActionButton>
+					    <ExploreIcon />
+					</FloatingActionButton>
 				</div>
 			</div>
 		)
