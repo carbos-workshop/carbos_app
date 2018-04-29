@@ -25,7 +25,7 @@ def get_parcel_data():
 
 def get_tree_data():
 
-    # Dat ais in GeoJSON format
+    # Data is in GeoJSON format
     url = "https://www-static.bouldercolorado.gov/docs/opendata/Trees_Public.GeoJSON?_ga=2.52576744.1507132045.1524847957-674020513.1524847957"
     response = requests.get(url)
 
@@ -63,8 +63,8 @@ def get_tree_species_data():
 
     # Data is in csv format
     # data is on data.world
-    urban = pd.read_csv('https://query.data.world/s/5pr54kshtnjwbko6xt5flzfdnkc2xq')
-    rural = pd.read_csv('https://query.data.world/s/xqyr5wrirr2i354un4yvmz2dghio4v')
+    trees = pd.read_csv('https://query.data.world/s/fwc6q3keo7tf77en5chin4r2ljehfu')
+
 
 
 
