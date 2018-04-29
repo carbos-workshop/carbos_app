@@ -73,13 +73,37 @@ const getLightTheme = () => {
 
 
 
-export const LoginContainer = () =>
-	    <div className="login-container">
-	    	<MuiThemeProvider muiTheme={getDarkTheme()}>
-	        	<Signup />
-	        </MuiThemeProvider>
 
-	    	<MuiThemeProvider muiTheme={getLightTheme()}>
-	    		<Login />
-	    	</MuiThemeProvider>
-	    </div>;
+export default class LoginContainer extends React.Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            showLogin: true
+        }
+    }
+
+    swapLoginView = () => {
+        this.setState({
+            showLogin: !this.state.showLogin,
+        })
+    }
+
+    render() {
+        return(
+            <div className="login-container">
+                <MuiThemeProvider  muiTheme={getDarkTheme()}>
+                    <Signup swapActive={this.swapLoginView} active={!this.state.showLogin} />
+                </MuiThemeProvider>
+
+                <MuiThemeProvider muiTheme={getLightTheme()}>
+                    <Login swapActive={this.swapLoginView} active={this.state.showLogin} />
+                </MuiThemeProvider>
+            </div>
+        )
+    }
+}
+
+
+
+

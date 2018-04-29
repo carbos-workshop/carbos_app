@@ -103,6 +103,15 @@ export default class Login extends React.Component {
         this.props.loginUser(this.state.email, this.state.password, this.state.redirectTo);
     }
 
+    swapToSignupView() {
+        this.props.swapActive()
+        // this.forceUpdate()
+    }
+
+    linkToExplore(){
+        console.log('link to explore page')
+    }
+
 	render(){
 
 		const styles = {
@@ -111,7 +120,7 @@ export default class Login extends React.Component {
 		}
 
 		return(
-			<div className="login">
+			<div className={this.props.active ? 'login active' : 'login'}>
 				<div className="login-fields">
 					<h1>Login</h1>
                     <TextField
@@ -142,12 +151,12 @@ export default class Login extends React.Component {
                         <FlatButton
                           style={{ marginTop: 50 }}
                           label="Sign Up"
-                          onClick={(e) => {console.log('swap to singup view')}}
+                          onClick={(e) => {this.swapToSignupView()}}
                         />
                     </div>
 				</div>
 				<div className="fab-container">
-					<FloatingActionButton>
+					<FloatingActionButton onClick={this.linkToExplore}>
 					    <ExploreIcon />
 					</FloatingActionButton>
 				</div>
@@ -158,5 +167,6 @@ export default class Login extends React.Component {
 
 Login.propTypes = {
     loginUser: React.PropTypes.func,
+    active: React.PropTypes.bool,
     statusText: React.PropTypes.string,
 };

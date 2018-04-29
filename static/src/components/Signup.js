@@ -6,6 +6,8 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ExploreIcon from 'material-ui/svg-icons/action/explore';
 
 import * as actionCreators from '../actions/auth';
 
@@ -44,6 +46,7 @@ export default class Signup extends React.Component {
             password_error_text: null,
             redirectTo: redirectRoute,
             disabled: true,
+            containerShown: this.props.active,
         };
     }
 
@@ -113,6 +116,15 @@ export default class Signup extends React.Component {
         this.props.registerUser(this.state.email, this.state.password, this.state.redirectTo);
     }
 
+    swapToLoginView() {
+        this.props.swapActive()
+    }
+
+
+    linkToExplore(){
+        console.log('link to explore page')
+    }
+    
 	render(){
 
 		const styles = {
@@ -121,7 +133,7 @@ export default class Signup extends React.Component {
 		}
 
 		return (
-			<div className="signup">
+			<div className={this.props.active ? 'signup active' : 'signup'}>
 				<div className="signup-fields">
 					<h1>Signup</h1>
                     <TextField
@@ -152,10 +164,15 @@ export default class Signup extends React.Component {
                         <FlatButton
                           style={{ marginTop: 50 }}
                           label="Login"
-                          onClick={(e) => {console.log('swap to singup view')}}
+                          onClick={(e) => {this.swapToLoginView()}}
                         />
                     </div>
 				</div>
+                <div className="fab-container">
+                    <FloatingActionButton onClick={this.linkToExplore}>
+                        <ExploreIcon />
+                    </FloatingActionButton>
+                </div>
 			</div>
 		)
 	}
@@ -163,5 +180,6 @@ export default class Signup extends React.Component {
 
 Signup.propTypes = {
     registerUser: React.PropTypes.func,
+    active: React.PropTypes.bool,
     registerStatusText: React.PropTypes.string,
 };
