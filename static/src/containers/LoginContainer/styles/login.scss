@@ -1,0 +1,51 @@
+//contected and tested
+.login-container{
+  display:flex;
+  flex-direction:row;
+  .login{
+    background-color:white !important;
+    height:100%;
+    width:50%;
+    // margin-left:50%;
+    display: flex;
+    flex-direction:column;
+    justify-content:center;
+    .login-fields{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      h1{
+        color:#EF5350;
+        text-align:center;
+      }
+    }
+    .login-buttons{
+      width: 50%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+  .signup{
+    height:100%;
+    width:50%;
+    display: flex;
+    flex-direction:column;
+    justify-content:center;
+    .signup-fields{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      h1{
+        color:white;
+        text-align:center;
+      }
+    }
+    .signup-buttons{
+      width: 50%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+}
