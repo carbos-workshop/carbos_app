@@ -11,9 +11,8 @@ def my_encoder(my_array):
 def my_decoder(encoded_data):
     decoded = base64.b64decode(encoded_data)
     text = decoded.decode('utf-8')
-    original_array_str = ','.join(text.split(','))
-    original_array = json.loads(original_array_str)
-    return original_array
+    original_text = ','.join(text.split(','))
+    return original_text
 
 def array_similarity(encoded_arr_1, encoded_arr_2):
     sim = SequenceMatcher(None, encoded_arr_1, encoded_arr_2).ratio()

@@ -16,9 +16,14 @@ def get_parcel_data():
         data = response.json()
 
     features = data['features'] # list of dictionariesf
-    properties = [feature['properties'] for feature in features] #list of dictionaries
 
-    return properties
+    output_data = []
+    for feature in features:
+        properties = feature['properties']
+        properties['geometry'] = feature['geometry']['coordinates']
+        output_data.append(properties)
+
+    return output_data
 
 #TODO: add geometry (parcel is properties only)
 
@@ -35,10 +40,15 @@ def get_tree_data():
     else:
         data = response.json()
 
-    features = data['features']  # list of dictionariesf
-    properties = [feature['properties'] for feature in features]  # list of dictionaries
+    features = data['features']  # list of dictionaries
 
-    return properties
+    output_data = []
+    for feature in features:
+        properties = feature['properties']
+        properties['geometry'] = feature['geometry']['coordinates']
+        output_data.append(properties)
+
+    return output_data
 
 
 def get_building_data():
@@ -54,9 +64,14 @@ def get_building_data():
         data = response.json()
 
     features = data['features']  # list of dictionariesf
-    properties = [feature['properties'] for feature in features]  # list of dictionaries
 
-    return properties
+    output_data = []
+    for feature in features:
+        properties = feature['properties']
+        properties['geometry'] = feature['geometry']['coordinates']
+        output_data.append(properties)
+
+    return output_data
 
 
 def get_tree_species_data():

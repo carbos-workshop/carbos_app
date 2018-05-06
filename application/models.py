@@ -1,6 +1,6 @@
 from index import db, bcrypt
-import time
 import web3
+from geoalchemy2.types import Geometry
 
 
 class User(db.Model):
@@ -38,20 +38,7 @@ class ParcelProperties(db.Model):
     AREASQFT = db.Column(db.Integer())
     ADDRESS = db.Column(db.String(255))
     PARCEL_ID = db.Column(db.String(255))
-    PR_NUMBER = db.Column(db.String(255))
-    PR_UNIT = db.Column(db.String(255))
-    PR_ST_NAME = db.Column(db.String(255))
-    PR_ST_MOD = db.Column(db.String(255))
-    PR_ZIP = db.Column(db.String(255))
-    BLDGSQFT = db.Column(db.Integer())
-    # BLDGVALUE = db.Column(db.Float())
-    # LANDUNITS = db.Column(db.Float())
-    # LANDVALUE = db.Column(db.Float())
-    # SUBCOMM = db.Column(db.String(255))
-    # BVCPAREA = db.Column(db.String(255))
-    # ZONING = db.Column(db.String(255))
-    # LANDUSE = db.Column(db.String(255))
-    # PREVREVIEW = db.Column(db.String(255))
+    geom = db.Column(Geometry(geometry_type='POLYGON', srid=4326))
 
 
 class TreeProperties(db.Model):
@@ -60,6 +47,7 @@ class TreeProperties(db.Model):
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
     UNIQUEID = db.Column(db.String(255))
     ADDRESS = db.Column(db.String(255))
+    geom = db.Column(Geometry(geometry_type='POINT', srid=4326))
 
 
 class BuildingProperties(db.Model):
@@ -74,4 +62,5 @@ class BuildingProperties(db.Model):
     HIGHHEIGHT = db.Column(db.Integer())
     SHAPE_AREA = db.Column(db.Float())
     SHAPE_LEN = db.Column(db.Float())
+    geom = db.Column(Geometry(geometry_type='POLYGON', srid=4326))
 
