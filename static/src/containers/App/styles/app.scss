@@ -11,5 +11,13 @@
   h1, h2, h3, h4 {
     font-weight: 300;
   }
-  background-color: #212121 !important;
+  .app{
+     min-height:100%;
+  }
+  .dark{
+    background-color: #212121 !important;
+  }
+  .light{
+    background-color: white !important;
+  }
 }

@@ -18,7 +18,9 @@
     justify-content:center;
     .fab-container{
       transform:translateY(100px);
-      display: block;
+      //TEMP
+      display: none;
+      //
       width: 0;
       margin-left: -25px;
       height: 0;
@@ -51,7 +53,9 @@
     .fab-container{
       margin-left: 100%;
       transform: translateX(-24px) translateY(100px);
-      display: block;
+      //TEMP
+      display: none;
+      //
       width: 0;
       height: 0;
     }
