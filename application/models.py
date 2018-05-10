@@ -1,19 +1,25 @@
 from index import db, bcrypt
+import web3
+from geoalchemy2.types import Geometry
 
 
 class User(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
+    wallet = db.Column(db.String(255))
 
     def __init__(self, email, password):
         self.email = email
         self.active = True
         self.password = User.hashed_password(password)
 
+        w = web3.Web3()
+        self.wallet = w.personal.newAccount('scott-is-awesome')
+
     @staticmethod
     def hashed_password(password):
-        return bcrypt.generate_password_hash(password).decode("utf-8")
+        return bcrypt.generate_password_hash(password)
 
     @staticmethod
     def get_user_with_email_and_password(email, password):
@@ -22,3 +28,4 @@ class User(db.Model):
             return user
         else:
             return None
+
