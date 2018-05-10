@@ -9,6 +9,8 @@ import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 import Toggle from 'material-ui/Toggle';
+import Sun from 'material-ui/svg-icons/image/brightness-5';
+import Moon from 'material-ui/svg-icons/image/brightness-2';
 
 import * as actionCreators from '../../actions/auth';
 
@@ -68,6 +70,21 @@ class Header extends React.Component {
 
     render() {
 
+        const style = {
+          headerRight: {
+            display: 'inline-flex',
+            alignItems: 'flex-end',
+            margin: '12px 24px 0 0',
+          },
+          toggle: {
+            knob: {
+              backgroundColor: '#FFFFFF'
+            },
+            track: {
+              backgroundColor: '#e1e1e1'
+            }
+          }
+        }
 
         return (
             <header>
@@ -99,10 +116,12 @@ class Header extends React.Component {
                   title="React-Redux-Flask"
                   onLeftIconButtonTouchTap={() => this.openNav()}
                   iconElementRight={
-                      <div>
-                        <Toggle onToggle={this.state.changeTheme}/>
-                        <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
-                      </div>                    }
+
+                        <div style={style.headerRight}>
+                          <Moon color={'#212121'}/>
+                          <Toggle trackSwitchedStyle={style.toggle.track} thumbSwitchedStyle={style.toggle.knob} onToggle={this.state.changeTheme}/>
+                          <Sun color={'white'}/>
+                        </div>                   }
                 />
             </header>
 
