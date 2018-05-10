@@ -125,7 +125,7 @@ class Header extends React.Component {
                     }
                 </LeftNav>
                 <AppBar
-                  title="React-Redux-Flask"
+                  title={this.props.pageTitle || 'Carbos'}
                   onLeftIconButtonTouchTap={() => this.openNav()}
                   iconStyleRight={style.headerRightWrapper}
                   iconElementRight={
@@ -143,6 +143,7 @@ class Header extends React.Component {
 }
 
 Header.propTypes = {
+    pageTitle: React.PropTypes.string,
     changeTheme: React.PropTypes.func,
     logoutAndRedirect: React.PropTypes.func,
     isAuthenticated: React.PropTypes.bool,
