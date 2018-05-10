@@ -6,11 +6,13 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
 import AppBar from 'material-ui/AppBar';
 import LeftNav from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
+import RightMenuToggle from './RightMenuToggle';
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 import Toggle from 'material-ui/Toggle';
 import Sun from 'material-ui/svg-icons/image/brightness-5';
 import Moon from 'material-ui/svg-icons/image/brightness-2';
+
 
 import * as actionCreators from '../../actions/auth';
 
@@ -71,12 +73,22 @@ class Header extends React.Component {
     render() {
 
         const style = {
+          headerRightWrapper: {
+            display: 'inline-flex',
+          },
           headerRight: {
             display: 'inline-flex',
-            alignItems: 'flex-end',
-            margin: '12px 24px 0 0',
+            alignItems: 'center',
+          },
+          svgIcon: {
+            height: '24px',
+            width: '24x',
           },
           toggle: {
+            style: {
+              width: 'auto',
+              marginRight: '15px',
+            },
             knob: {
               backgroundColor: '#FFFFFF'
             },
@@ -115,12 +127,13 @@ class Header extends React.Component {
                 <AppBar
                   title="React-Redux-Flask"
                   onLeftIconButtonTouchTap={() => this.openNav()}
+                  iconStyleRight={style.headerRightWrapper}
                   iconElementRight={
-
                         <div style={style.headerRight}>
-                          <Moon color={'#212121'}/>
-                          <Toggle trackSwitchedStyle={style.toggle.track} thumbSwitchedStyle={style.toggle.knob} onToggle={this.state.changeTheme}/>
-                          <Sun color={'white'}/>
+                          <Moon color={'#212121'} style={style.svgIcon} />
+                          <Toggle trackSwitchedStyle={style.toggle.track} thumbSwitchedStyle={style.toggle.knob} onToggle={this.state.changeTheme} style={style.toggle.style} />
+                          <Sun color={'white'} style={style.svgIcon} />
+                          <RightMenuToggle />
                         </div>                   }
                 />
             </header>
