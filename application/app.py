@@ -1,13 +1,23 @@
 from flask import request, render_template, jsonify, url_for, redirect, g
-from .models import User, ParcelProperties, TreeProperties, BuildingProperties
+from .models import User
 from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
-import re
 
-from application.data_scraper.boulder import get_parcel_data, get_tree_data, get_building_data
-from application.data_scraper.encoderz import my_encoder
+import psycopg2
+import geopandas as gpd
+#from shapely.geometry import Polygon, Point
+#from geopandas.geoseries import GeoSeries
 
+#from application.data_scraper.boulder import get_parcel_data, get_tree_data, get_building_data
+#from application.data_scraper.encoderz import my_encoder
+
+
+try:
+    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+    cur = conn.cursor()
+except:
+    print('[Error] - app.py - connecting to database.')
 
 @app.route('/', methods=['GET'])
 def index():
@@ -68,58 +78,17 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 
-@app.route("/scrape_parcels", methods=["GET"])
-def scrape_the_parcels():
-    data = get_parcel_data()
-    for row in data:
-        geom = 'POLYGON' + '(' + str(tuple(row['geometry'])).replace(',', '').replace('[', '').replace(']', ',') + ')'
-        geom = re.sub('\,+', ',', geom).rstrip(',')
-        parcel = ParcelProperties()
-        parcel.ASR_ID = row['ASR_ID']
-        parcel.PARCEL_ID = row['PARCEL_ID']
-        parcel.AREASQFT = row['AREASQFT']
-        parcel.ADDRESS = row['ADDRESS']
-        parcel.geom_hash = my_encoder(geom)
-        parcel.geom = geom
-        db.session.add(parcel)
-    db.session.commit()
-    return 'Parcel data loaded'
+@app.route("/howdy", methods=["GET"])
+def howdy():
+    #incoming = request.get_json()
+    cur.execute("""SELECT * FROM parcels WHERE sitaddcty=(%s) LIMIT 5""", ('ASPEN',))
+    rows = cur.fetchall()
+    if rows:
+        return jsonify(rows)
+    else:
+        return 'Nothing Found'
 
-
-@app.route("/scrape_trees", methods=["GET"])
-def scrape_the_trees():
-    data = get_tree_data()
-    for row in data:
-        geom = 'SRID=4326;' + 'POINT' + str(tuple(row['geometry'])).replace(',','')
-        tree = TreeProperties()
-        tree.ADDRESS = row['ADDRESS']
-        tree.UNIQUEID = row['UNIQUEID']
-        tree.geom_hash = my_encoder(geom)
-        tree.geom = geom
-        db.session.add(tree)
-    db.session.commit()
-    return 'Tree data loaded'
-
-
-@app.route("/scrape_buildings", methods=["GET"])
-def scrape_the_buildings():
-    data = get_building_data()
-    for row in data:
-        geom = 'POLYGON' + '(' + str(tuple(row['geometry'])).replace(',', '').replace('[', '').replace(']', ',') + ')'
-        geom = re.sub('\,+', ',', geom).rstrip(',').replace(',)',')')
-        building = BuildingProperties()
-        building.DEMAVGELEV = row['DEMAVGELEV']
-        building.DSMAVGELEV = row['DSMAVGELEV']
-        building.AVGHEIGHT = row['AVGHEIGHT']
-        building.DEMLOWELEV = row['DEMLOWELEV']
-        building.DSMHIGELVE = row['DSMHIGELVE']
-        building.HIGHHEIGHT = row['HIGHHEIGHT']
-        building.SHAPE_AREA = row['SHAPE_AREA']
-        building.SHAPE_LEN = row['SHAPE_LEN']
-        building.geom_hash = my_encoder(geom)
-        building.geom = geom
-        db.session.add(building)
-    db.session.commit()
-    return 'Building data loaded'
-
+    # data = gpd.read_postgis(f"""SELECT * FROM parcels WHERE sitaddcty={incoming_string}""",
+    #                         con=conn)
+    # my_json = data.to_json()
 

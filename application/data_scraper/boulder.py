@@ -1,6 +1,7 @@
 import json
 import requests
 import pandas as pd
+import geopandas as gpd
 
 # Boulder parcel data
 def get_parcel_data():
@@ -15,7 +16,7 @@ def get_parcel_data():
     else:
         data = response.json()
 
-    features = data['features'] # list of dictionariesf
+    features = data['features'] # list of dictionaries
 
     output_data = []
     for feature in features:
@@ -63,7 +64,7 @@ def get_building_data():
     else:
         data = response.json()
 
-    features = data['features']  # list of dictionariesf
+    features = data['features']  # list of dictionaries
 
     output_data = []
     for feature in features:
@@ -83,4 +84,36 @@ def get_tree_species_data():
 
 
 
+#colorado population
+#https://gis.dola.colorado.gov/capi/geojson?limit=99999&db=acs1216&schema=data&table=b01003&sumlev=140&type=json&state=8
 
+#df = gpd.GeoDataFrame(data['features'])
+#df.to_sql()
+#from sqlalchemy import create_engine
+#engine = create_engine('postgresql://gocoder:gocoder2018@localhost:5432/carbos')
+#from geoalchemy2 import WKTElement, Geometry
+
+#data = get_building_data()
+#df = gpd.GeoDataFrame(data)
+#geodataframe = df
+#geodataframe['geom'] = geodataframe['geometry'].apply(lambda x: WKTElement(x.wkt))
+#geodataframe = geodataframe.head(1)
+#geodataframe.to_sql('poly_data', engine, if_exists='append', index=False, dtype={'geom': Geometry('POLYGON'))
+
+
+from geoalchemy2 import Geometry, WKTElement
+from sqlalchemy import create_engine
+
+engine = create_engine('postgresql://gocoder:gocoder2018@localhost:5432/carbos')
+def create_wkt_element(geom):
+    return WKTElement(geom.wkt)
+
+#data = get_building_data()
+#geodataframe = gpd.GeoDataFrame(data)
+
+geodataframe = gpd.read_file('public_data/Arapahoe.shp')
+#df.to_sql('parcel_polys',con=engine)
+geodataframe['geom'] = geodataframe['geometry'].apply(create_wkt_element)
+geodataframe = geodataframe.drop(columns=['geometry'])
+geodataframe.to_sql('my_polys', engine, if_exists='replace', index=False,
+                         dtype={'geom': Geometry('POLYGON')})

@@ -29,38 +29,3 @@ class User(db.Model):
         else:
             return None
 
-
-class ParcelProperties(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
-    ASR_ID = db.Column(db.String(255))
-    AREASQFT = db.Column(db.Integer())
-    ADDRESS = db.Column(db.String(255))
-    PARCEL_ID = db.Column(db.String(255))
-    geom = db.Column(Geometry(geometry_type='POLYGON', srid=4326))
-
-
-class TreeProperties(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
-    UNIQUEID = db.Column(db.String(255))
-    ADDRESS = db.Column(db.String(255))
-    geom = db.Column(Geometry(geometry_type='POINT', srid=4326))
-
-
-class BuildingProperties(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
-    DEMAVGELEV = db.Column(db.Integer())
-    DSMAVGELEV = db.Column(db.Integer())
-    AVGHEIGHT = db.Column(db.Integer())
-    DEMLOWELEV = db.Column(db.Integer())
-    DSMHIGELVE = db.Column(db.Integer())
-    HIGHHEIGHT = db.Column(db.Integer())
-    SHAPE_AREA = db.Column(db.Float())
-    SHAPE_LEN = db.Column(db.Float())
-    geom = db.Column(Geometry(geometry_type='POLYGON', srid=4326))
-
