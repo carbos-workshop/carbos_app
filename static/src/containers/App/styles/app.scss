@@ -1,13 +1,23 @@
 /* global styles */
 @import 'fonts/roboto';
+@import 'fonts/oxygen';
 @import 'typography';
 @import 'links';
 
 :global(body) {
   position: relative;
-  font-family: 'Roboto', sans-serif !important;
+  // font-family: 'Roboto', sans-serif !important;
+  font-family: 'Oxygen', sans-serif !important;
   h1, h2, h3, h4 {
     font-weight: 300;
   }
-
+  .app{
+     min-height:100%;
+  }
+  .dark{
+    background-color: #212121 !important;
+  }
+  .light{
+    background-color: white !important;
+  }
 }

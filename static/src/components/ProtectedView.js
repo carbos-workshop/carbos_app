@@ -31,7 +31,7 @@ export default class ProtectedView extends React.Component {
 
     render() {
         return (
-            <div>
+            <div >
                 {!this.props.loaded
                     ? <h1>Loading data...</h1>
                     :
