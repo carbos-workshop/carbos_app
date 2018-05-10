@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
 import * as actionCreators from '../actions/auth';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 
 function mapStateToProps(state) {
     return {
@@ -84,5 +85,5 @@ export function requireAuthentication(Component) {
         isAuthenticated: React.PropTypes.bool,
     };
 
-    return connect(mapStateToProps, mapDispatchToProps)(AuthenticatedComponent);
+    return muiThemeable()(connect(mapStateToProps, mapDispatchToProps)(AuthenticatedComponent));
 }
