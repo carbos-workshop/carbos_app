@@ -4,6 +4,20 @@ from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
+import psycopg2
+import geopandas as gpd
+#from shapely.geometry import Polygon, Point
+#from geopandas.geoseries import GeoSeries
+
+#from application.data_scraper.boulder import get_parcel_data, get_tree_data, get_building_data
+#from application.data_scraper.encoderz import my_encoder
+
+
+try:
+    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+    cur = conn.cursor()
+except:
+    print('[Error] - app.py - connecting to database.')
 
 @app.route('/', methods=['GET'])
 def index():
@@ -62,3 +76,19 @@ def is_token_valid():
         return jsonify(token_is_valid=True)
     else:
         return jsonify(token_is_valid=False), 403
+
+
+@app.route("/howdy", methods=["GET"])
+def howdy():
+    #incoming = request.get_json()
+    cur.execute("""SELECT * FROM parcels WHERE sitaddcty=(%s) LIMIT 5""", ('ASPEN',))
+    rows = cur.fetchall()
+    if rows:
+        return jsonify(rows)
+    else:
+        return 'Nothing Found'
+
+    # data = gpd.read_postgis(f"""SELECT * FROM parcels WHERE sitaddcty={incoming_string}""",
+    #                         con=conn)
+    # my_json = data.to_json()
+
