@@ -9,6 +9,7 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
 import axios from 'axios';
 
 //material ui input field and button
+import {Card, CardText} from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
@@ -29,6 +30,7 @@ class Analytics extends React.Component {
       super(props);
       this.state = {
         inputFieldValue: '',
+        responseObject: '',
       }
   }
 
@@ -40,7 +42,7 @@ class Analytics extends React.Component {
     }
 
     get_a_thing = () => {
-      return axios.get('/api/special_thing_location');
+      return axios.get('https://jsonplaceholder.typicode.com/posts/1');
     }
 
     updateValue = e => {
@@ -51,7 +53,14 @@ class Analytics extends React.Component {
 
     submit = () => {
       console.log('submit function called with:', this.state.inputFieldValue)
-      //post_a_message(this.state.inputFieldValue)
+      //NOTE: replace this.get_a_thing() with whatever axios call you want
+      this.get_a_thing()
+        .then( response => {
+          //this call to setState is required to put the JSON on the page
+          this.setState({
+            responseObject: response
+          })
+        })
     }
 
     render() {
@@ -60,7 +69,7 @@ class Analytics extends React.Component {
         //they can also be imported or written the traditional way in scss/css
         const style = {
           wrapper: {
-            height: '400px',
+            height: '100%',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-around',
@@ -81,6 +90,11 @@ class Analytics extends React.Component {
                   label="Submit Input Field Value"
                   onClick={this.submit}
                 />
+              <Card>
+                <CardText>
+                  {JSON.stringify(this.state.responseObject)}
+                </CardText>
+              </Card>
             </div>
         );
     }
