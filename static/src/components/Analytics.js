@@ -43,6 +43,12 @@ class Analytics extends React.Component {
       return axios.get('/api/special_thing_location');
     }
 
+    updateValue = e => {
+        this.setState({
+          inputFieldValue: e.target.value
+        })
+    }
+
     submit = () => {
       console.log('submit function called with:', this.state.inputFieldValue)
       //post_a_message(this.state.inputFieldValue)
@@ -66,8 +72,8 @@ class Analytics extends React.Component {
                 <h1>Analytics</h1>
                   <TextField
                     fullWidth={true}
-                    hintText="Input Hint"
                     floatingLabelText="Input Label"
+                    onChange={(e)=> { this.updateValue(e) }}
                     value={this.state.inputFieldValue}
                   />
                 <RaisedButton
