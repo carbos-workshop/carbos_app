@@ -24,6 +24,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 //     return bindActionCreators(actionCreators, dispatch);
 // }
 // @connect(mapStateToProps, mapDispatchToProps)
+
+
 class Analytics extends React.Component {
 
   constructor(props) {
@@ -34,15 +36,16 @@ class Analytics extends React.Component {
       }
   }
 
+
     //sample axios call
     post_a_message = message => {
-        return axios.post('/api/whatever', {
+        return axios.post('/api/test_post', {
             message
         });
     }
 
     get_a_thing = () => {
-      return axios.get('https://jsonplaceholder.typicode.com/posts/1');
+      return axios.get('/api/test_get');
     }
 
     updateValue = e => {
@@ -53,10 +56,8 @@ class Analytics extends React.Component {
 
     submit = () => {
       console.log('submit function called with:', this.state.inputFieldValue)
-      //NOTE: replace this.get_a_thing() with whatever axios call you want
-      this.get_a_thing()
+      this.post_a_message(this.state.inputFieldValue)
         .then( response => {
-          //this call to setState is required to put the JSON on the page
           this.setState({
             responseObject: response
           })
@@ -77,24 +78,29 @@ class Analytics extends React.Component {
         }
 
         return (
-            <div className="col-md-8" style={style.wrapper}>
-                <h1>Analytics</h1>
-                  <TextField
-                    fullWidth={true}
-                    floatingLabelText="Input Label"
-                    onChange={(e)=> { this.updateValue(e) }}
-                    value={this.state.inputFieldValue}
-                  />
-                <RaisedButton
-                  primary={true}
-                  label="Submit Input Field Value"
-                  onClick={this.submit}
-                />
-              <Card>
-                <CardText>
-                  {JSON.stringify(this.state.responseObject)}
-                </CardText>
-              </Card>
+
+            <div>
+
+                <div className="col-md-8" style={style.wrapper}>
+                    <h1>Analytics</h1>
+                      <TextField
+                        fullWidth={true}
+                        floatingLabelText="Input Label"
+                        onChange={(e)=> { this.updateValue(e) }}
+                        value={this.state.inputFieldValue}
+                      />
+                    <RaisedButton
+                      primary={true}
+                      label="Submit Input Field Value"
+                      onClick={this.submit}
+                    />
+                  <Card>
+                    <CardText>
+                      {JSON.stringify(this.state.responseObject)}
+                    </CardText>
+                  </Card>
+
+                </div>
             </div>
         );
     }

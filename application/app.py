@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
 import psycopg2
+import sys
 import geopandas as gpd
 #from shapely.geometry import Polygon, Point
 #from geopandas.geoseries import GeoSeries
@@ -78,17 +79,22 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 
-@app.route("/howdy", methods=["GET"])
-def howdy():
-    #incoming = request.get_json()
-    cur.execute("""SELECT * FROM parcels WHERE sitaddcty=(%s) LIMIT 5""", ('ASPEN',))
+@app.route("/api/test_get", methods=["GET", "POST"])
+def test_get():
+    incoming = request.get_json()
+    print(str(incoming), file=sys.stderr)
+    return jsonify(incoming)
+
+
+@app.route("/api/test_post", methods=["POST"])
+def test_post():
+    incoming = request.get_json()
+    print(str(incoming), file=sys.stderr)
+    cur.execute("""SELECT DISTINCT owner FROM parcels WHERE sitaddcty=(%s) LIMIT 50""", (str(incoming['message']),))
     rows = cur.fetchall()
+    print(str(rows), file=sys.stderr)
     if rows:
         return jsonify(rows)
     else:
         return 'Nothing Found'
-
-    # data = gpd.read_postgis(f"""SELECT * FROM parcels WHERE sitaddcty={incoming_string}""",
-    #                         con=conn)
-    # my_json = data.to_json()
 
