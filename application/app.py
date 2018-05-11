@@ -89,8 +89,12 @@ def test_get():
 @app.route("/api/test_post", methods=["POST"])
 def test_post():
     incoming = request.get_json()
-    print(str(incoming), file=sys.stderr)
-    cur.execute("""SELECT DISTINCT owner FROM parcels WHERE sitaddcty=(%s) LIMIT 50""", (str(incoming['message']),))
+    i_city,i_owner = incoming['message'].split(',')
+    i_owner = "%" + str(i_owner) + "%"
+    qry = f"""SELECT DISTINCT(parcels.owner) as Owner, SUM(parcels.shape_area) as Area FROM parcels WHERE sitaddcty=('{str(i_city)}') AND owner LIKE ('{str(i_owner)}') GROUP BY Owner LIMIT 50"""
+    print(str(incoming['message']), file=sys.stderr)
+    print(qry ,file=sys.stderr)
+    cur.execute(qry)
     rows = cur.fetchall()
     print(str(rows), file=sys.stderr)
     if rows:
