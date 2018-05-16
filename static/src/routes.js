@@ -5,7 +5,7 @@ import { Route } from 'react-router';
 
 /* containers */
 import { App } from './containers/App';
-import { ExploreContainer } from './containers/ExploreContainer';
+import  { ExploreContainer } from './containers/ExploreContainer';
 import  LoginContainer  from './containers/LoginContainer';
 // import LoginView from './components/LoginView';
 // import RegisterView from './components/RegisterView';

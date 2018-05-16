@@ -1,9 +1,14 @@
 import React from 'react';
-
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 /* components */
-import { Explore } from '../../components/Explore';
+import Explore from '../../components/Explore';
 
-export const ExploreContainer = () =>
-    <section>
+const ExploreContainer = (props) => (
+  <MuiThemeProvider muiTheme={props.theme}>
         <Explore />
-    </section>;
+  </ MuiThemeProvider>
+)
+
+// export { ExploreContainer }
+
+export { ExploreContainer }
