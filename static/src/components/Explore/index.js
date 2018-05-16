@@ -1,8 +1,8 @@
 import React from 'react';
 
-export const Home = () =>
+export const Explore = () =>
     <section>
         <div className="container text-center">
-            <h1>Hello</h1>
+            <h1>Explore</h1>
         </div>
     </section>;

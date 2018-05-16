@@ -6,6 +6,7 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
 import AppBar from 'material-ui/AppBar';
 import LeftNav from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
+import Drawer from 'material-ui/Drawer';
 import RightMenuToggle from './RightMenuToggle';
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
@@ -100,21 +101,27 @@ class Header extends React.Component {
 
         return (
             <header>
-                <LeftNav open={this.state.open}>
+                <Drawer
+                  open={this.state.open}
+                  docked={false}
+                  onRequestChange={(open) => this.setState({open})}>
                     {
                         !this.props.isAuthenticated ?
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/login')}>
-                                    Login
-                                </MenuItem>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/register')}>
-                                    Register
-                                </MenuItem>
+                              <MenuItem onClick={() => this.dispatchNewRoute('/explore')}>
+                                  Explore
+                              </MenuItem>
                             </div>
                             :
                             <div>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/analytics')}>
                                     Analytics
+                                </MenuItem>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/explore')}>
+                                    Explore
+                                </MenuItem>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/main')}>
+                                    Dashboard
                                 </MenuItem>
                                 <Divider />
 
@@ -123,7 +130,7 @@ class Header extends React.Component {
                                 </MenuItem>
                             </div>
                     }
-                </LeftNav>
+                </Drawer>
                 <AppBar
                   title={this.props.pageTitle || 'Carbos'}
                   onLeftIconButtonTouchTap={() => this.openNav()}
@@ -133,7 +140,7 @@ class Header extends React.Component {
                           <Moon color={'#212121'} style={style.svgIcon} />
                           <Toggle trackSwitchedStyle={style.toggle.track} thumbSwitchedStyle={style.toggle.knob} onToggle={this.state.changeTheme} style={style.toggle.style} />
                           <Sun color={'white'} style={style.svgIcon} />
-                          <RightMenuToggle />
+                          <RightMenuToggle isAuthenticated={this.props.isAuthenticated} logout={this.logout} />
                         </div>                   }
                 />
             </header>

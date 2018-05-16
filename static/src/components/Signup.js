@@ -38,7 +38,7 @@ export default class Signup extends React.Component {
 
     constructor(props) {
         super(props);
-        const redirectRoute = '/login';
+        const redirectRoute = '/welcome';
         this.state = {
             email: '',
             password: '',
@@ -124,7 +124,7 @@ export default class Signup extends React.Component {
     linkToExplore(){
         console.log('link to explore page')
     }
-    
+
 	render(){
 
 		const styles = {

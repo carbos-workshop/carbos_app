@@ -26,7 +26,7 @@ export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
-        const redirectRoute = '/login';
+        const redirectRoute = '/welcome';
         this.state = {
             email: '',
             password: '',
