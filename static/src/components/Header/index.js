@@ -103,6 +103,7 @@ class Header extends React.Component {
                 <Drawer
                   open={this.state.open}
                   docked={false}
+                  width={200}
                   onRequestChange={(open) => this.setState({open})}>
                     {
                         !this.props.isAuthenticated ?

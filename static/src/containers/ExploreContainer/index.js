@@ -9,6 +9,4 @@ const ExploreContainer = (props) => (
   </ MuiThemeProvider>
 )
 
-// export { ExploreContainer }
-
 export { ExploreContainer }
