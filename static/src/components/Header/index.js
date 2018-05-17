@@ -89,8 +89,11 @@ class Header extends React.Component {
               width: 'auto',
               marginRight: '15px',
             },
-            knob: {
+            knobOn: {
               backgroundColor: '#FFFFFF'
+            },
+            knobOff: {
+              backgroundColor: '#212121',
             },
             track: {
               backgroundColor: '#e1e1e1'
@@ -138,7 +141,7 @@ class Header extends React.Component {
                   iconElementRight={
                         <div style={style.headerRight}>
                           <Moon color={'#212121'} style={style.svgIcon} />
-                          <Toggle trackSwitchedStyle={style.toggle.track} thumbSwitchedStyle={style.toggle.knob} onToggle={this.state.changeTheme} style={style.toggle.style} />
+                          <Toggle trackSwitchedStyle={style.toggle.track} thumbStyle={style.toggle.knobOff} thumbSwitchedStyle={style.toggle.knobOn} onToggle={this.state.changeTheme} style={style.toggle.style} />
                           <Sun color={'white'} style={style.svgIcon} />
                           <RightMenuToggle isAuthenticated={this.props.isAuthenticated} logout={this.logout} />
                         </div>                   }

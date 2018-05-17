@@ -38,9 +38,6 @@ class Explore extends React.Component {
 
     return (
       <div className="container">
-        <LeftNav containerStyle={style.nav}>
-          <h1>App-Wide Info</h1>
-        </LeftNav>
         {
           this.state.projects.map( (project, index) => (
             <ProjectCard
