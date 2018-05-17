@@ -6,7 +6,9 @@ import { Route } from 'react-router';
 /* containers */
 import { App } from './containers/App';
 import  { ExploreContainer } from './containers/ExploreContainer';
+
 import  LoginContainer  from './containers/LoginContainer';
+import NewProjectForm from './components/NewProjectForm';
 // import LoginView from './components/LoginView';
 // import RegisterView from './components/RegisterView';
 import ProtectedView from './components/ProtectedView';
@@ -27,6 +29,7 @@ export default (
 		<Route path="/" component={App}>
 				<Route path="main" component={requireAuthentication(ProtectedView)} />
 				<Route path="explore" component={requireNoAuthentication(ExploreContainer)} />
+				<Route path="new/project" component={requireNoAuthentication(NewProjectForm)} />
 				<Route path="analytics" component={requireAuthentication(Analytics)} />
 				<Route path="*" component={DetermineAuth(NotFound)} />
 		</Route>
