@@ -47,7 +47,7 @@ class ProjectCard extends React.Component {
           subtitleColor={this.props.muiTheme.palette.primary1Color}
           avatar={this.props.blockie || '/img'}
           actAsExpander={true}
-          showExpandableButton={true}
+          showExpandableButton={false}
         />
         <CardText expandable={true}>
           {this.props.description}

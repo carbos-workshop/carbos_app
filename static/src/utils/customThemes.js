@@ -49,6 +49,9 @@ export function getLightTheme() {
         "textColor": Colors.black,
         "selectedTextColor": Colors.red500
     },
+    "menuItem": {
+        "selectedTextColor": Colors.red500,
+    },
     "textField": {
         "errorColor": Colors.red500
     },
