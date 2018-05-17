@@ -8,13 +8,11 @@ export function getDarkTheme() {
   let overwrites = {
   	"fontFamily": 'Oxygen, sans-serif',
     "palette": {
-        "canvasColor": Colors.grey900,
-        "primary1Color": Colors.red400,
-        "primary2Color": Colors.red500,
-        "accent1Color": Colors.yellow400,
-        "primary3Color": Colors.grey600,
-        "accent2Color": Colors.grey800,
-        "accent3Color": Colors.yellow300
+        "primary1Color": Colors.red500,
+        "primary2Color": Colors.red900,
+        "accent1Color": Colors.amberA200,
+        "accent2Color": Colors.amberA700,
+        "accent3Color": Colors.deepOrange300
     },
     "tabs": {
         "textColor": fade(Colors.darkWhite, 0.87),
@@ -38,10 +36,18 @@ export function getDarkTheme() {
 export function getLightTheme() {
   let overwrites = {
   	"fontFamily": 'Oxygen, sans-serif',
+    "palette": {
+        "primary1Color": Colors.red500,
+        "primary2Color": Colors.red900,
+        "accent1Color": Colors.amberA200,
+        "accent2Color": Colors.amberA700,
+        "accent3Color": Colors.deepOrange300,
+        "pickerHeaderColor": Colors.amber800
+    },
     "tabs": {
-        "textColor": Colors.red400,
-        "selectedTextColor": Colors.red500,
-        "backgroundColor": Colors.white
+        "backgroundColor": Colors.white,
+        "textColor": Colors.black,
+        "selectedTextColor": Colors.red500
     },
     "textField": {
         "errorColor": Colors.red500
@@ -51,16 +57,16 @@ export function getLightTheme() {
         "backgroundColor": fade(Colors.darkBlack, 0.87),
         "actionColor": Colors.red500
     },
-    "palette": {
-        "primary1Color": Colors.red400,
-        "primary2Color": Colors.red500,
-        "accent1Color": Colors.black,
-        "primary3Color": Colors.grey600,
-        "accent2Color": Colors.grey700,
-        "accent3Color": Colors.grey500,
-        "pickerHeaderColor": Colors.red300,
-        "alternateTextColor": Colors.white
-    }
+    // "palette": {
+    //     "primary1Color": Colors.red400,
+    //     "primary2Color": Colors.red500,
+    //     "accent1Color": Colors.black,
+    //     "primary3Color": Colors.grey600,
+    //     "accent2Color": Colors.grey700,
+    //     "accent3Color": Colors.grey500,
+    //     "pickerHeaderColor": Colors.red300,
+    //     "alternateTextColor": Colors.white
+    // }
 };
   return getMuiTheme(baseLightTheme, overwrites);
 }

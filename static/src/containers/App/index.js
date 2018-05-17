@@ -82,7 +82,7 @@ class App extends React.Component { // eslint-disable-line react/prefer-stateles
                       className="container"
                       style={{ marginTop: 10, paddingBottom: 250 }}
                     >
-                        {this.props.children}
+                        {React.cloneElement(this.props.children, { theme: this.getTheme() })}
                     </div>
                 </div>
             </MuiThemeProvider>

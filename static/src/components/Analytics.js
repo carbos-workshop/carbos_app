@@ -36,7 +36,7 @@ class Analytics extends React.Component {
 
     //sample axios call
     post_a_message = message => {
-        return axios.post('/api/whatever', {
+        return axios.post('https://jsonplaceholder.typicode.com/posts', {
             message
         });
     }
@@ -54,9 +54,8 @@ class Analytics extends React.Component {
     submit = () => {
       console.log('submit function called with:', this.state.inputFieldValue)
       //NOTE: replace this.get_a_thing() with whatever axios call you want
-      this.get_a_thing()
+      this.post_a_message(this.state.inputFieldValue)
         .then( response => {
-          //this call to setState is required to put the JSON on the page
           this.setState({
             responseObject: response
           })
