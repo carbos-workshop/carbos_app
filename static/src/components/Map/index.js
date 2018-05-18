@@ -1,33 +1,38 @@
 import React, { Component } from 'react'
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet'
+import {
+  Map,
+  Polygon,
+  Popup,
+  Rectangle,
+  TileLayer,
+} from 'react-leaflet'
 
-export default class SimpleExample extends Component {
-  state = {
-    lat: 39.612381,
-    lng: -104.921524,
-    zoom: 17,
-  }
-
+export default class MapTest extends Component {
   render() {
-    const position = [this.state.lat, this.state.lng]
-    const styles = {
-      map:{
-        height: '400px',
-      },
-    }
+    const center = [51.505, -0.09]
+
+    const polygon = [[51.515, -0.09], [51.52, -0.1], [51.52, -0.12]]
+
+    const multiPolygon = [
+      [[51.51, -0.12], [51.51, -0.13], [51.53, -0.13]],
+      [[51.51, -0.05], [51.51, -0.07], [51.53, -0.07]],
+    ]
+
+    const rectangle = [[51.49, -0.08], [51.5, -0.06]]
+
     return (
-      <Map style={styles.map} center={position} zoom={this.state.zoom}>
+      <Map style={{height:'500px'}} center={center} zoom={13}>
         <TileLayer
           attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position}>
-          <Popup>
-            <span>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </span>
-          </Popup>
-        </Marker>
+        <Polygon color="purple" positions={polygon} />
+        <Polygon color="purple" positions={multiPolygon}>
+        <Popup>
+          <span>Popup in Polygon</span>
+        </Popup>
+        </Polygon>
+        <Rectangle bounds={rectangle} color="black" />
       </Map>
     )
   }
