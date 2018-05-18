@@ -8,6 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import MapTest from '../Map';
 
 import * as actionCreators from '../../actions/theme';
 
@@ -98,7 +99,9 @@ class NewProjectForm extends React.Component {
 
     return (
       <div className="container">
-      <h2 style={styles.pageHeader}>New Project Creation</h2>
+
+        <h2 style={styles.pageHeader}>New Project Creation</h2>
+
         <Card style={styles.card}>
           <CardHeader
             title={<h3 style={styles.cardHeader}>Identify Valid Parcel</h3>}
@@ -163,6 +166,25 @@ class NewProjectForm extends React.Component {
             </SelectField>
           </CardText>
         </Card>
+
+        <Card style={styles.card}>
+          <CardHeader
+            title={<h3 style={styles.cardHeader}>View Parcel Calculations</h3>}
+            avatar={
+              <Avatar
+               color={'white'}
+               backgroundColor={this.props.muiTheme.palette.primary1Color}
+               >
+               3
+              </Avatar>
+            }
+          >
+          </CardHeader>
+          <CardText>
+            <MapTest />
+          </CardText>
+        </Card>
+
       </div>
     )
   }
