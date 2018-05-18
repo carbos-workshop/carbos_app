@@ -13,11 +13,11 @@ import geopandas as gpd
 #from application.data_scraper.encoderz import my_encoder
 
 
-try:
-    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
-    cur = conn.cursor()
-except:
-    print('[Error] - app.py - connecting to database.')
+# try:
+#     conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+#     cur = conn.cursor()
+# except:
+#     print('[Error] - app.py - connecting to database.')
 
 @app.route('/', methods=['GET'])
 def index():
@@ -91,4 +91,3 @@ def howdy():
     # data = gpd.read_postgis(f"""SELECT * FROM parcels WHERE sitaddcty={incoming_string}""",
     #                         con=conn)
     # my_json = data.to_json()
-

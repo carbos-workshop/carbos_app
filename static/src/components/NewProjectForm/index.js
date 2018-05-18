@@ -88,6 +88,9 @@ class NewProjectForm extends React.Component {
         lineHeight:'40px',
         margin:'0',
       },
+      formField: {
+        display: 'block',
+      },
       submitButton: {
         marginTop:'2em',
       }
@@ -111,13 +114,13 @@ class NewProjectForm extends React.Component {
           </CardHeader>
           <CardText>
             <TextField
-              fullWidth={true}
+              style={styles.formField}
               floatingLabelText="Your Name"
               onChange={(e)=> { this.updateValue(e, 'name') }}
               value={this.state.nameFieldValue}
             />
             <TextField
-              fullWidth={true}
+              style={styles.formField}
               floatingLabelText="Your City"
               onChange={(e)=> { this.updateValue(e, 'city') }}
               value={this.state.cityFieldValue}
@@ -154,7 +157,7 @@ class NewProjectForm extends React.Component {
               <MenuItem value={null} primaryText="" />
               {
                 this.state.addresses.map( (address, index) => (
-                  <MenuItem value={address.name} primaryText={address.name} />
+                  <MenuItem key={index} value={address.name} primaryText={address.name} />
                 ))
               }
             </SelectField>
