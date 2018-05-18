@@ -27,9 +27,9 @@ export default (
 	<div>
 		<Route path="/welcome" component={requireNoAuthentication(LoginContainer)} />
 		<Route path="/" component={App}>
+				<Route path="explore" component={ExploreContainer} />
 				<Route path="main" component={requireAuthentication(ProtectedView)} />
-				<Route path="explore" component={requireNoAuthentication(ExploreContainer)} />
-				<Route path="new/project" component={requireNoAuthentication(NewProjectForm)} />
+				<Route path="new/project" component={requireAuthentication(NewProjectForm)} />
 				<Route path="analytics" component={requireAuthentication(Analytics)} />
 				<Route path="*" component={DetermineAuth(NotFound)} />
 		</Route>

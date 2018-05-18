@@ -28,7 +28,7 @@ const RightMenuToggle = (props) => (
           <MenuItem primaryText="Settings" onClick={ () => {browserHistory.push('/settings')} }/>
           <Divider />
           <MenuItem primaryText="Logout" onClick={ () => {props.logout(e)} }/>
-        </div>  
+        </div>
     }
   </IconMenu>
 );

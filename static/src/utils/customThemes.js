@@ -60,16 +60,6 @@ export function getLightTheme() {
         "backgroundColor": fade(Colors.darkBlack, 0.87),
         "actionColor": Colors.red500
     },
-    // "palette": {
-    //     "primary1Color": Colors.red400,
-    //     "primary2Color": Colors.red500,
-    //     "accent1Color": Colors.black,
-    //     "primary3Color": Colors.grey600,
-    //     "accent2Color": Colors.grey700,
-    //     "accent3Color": Colors.grey500,
-    //     "pickerHeaderColor": Colors.red300,
-    //     "alternateTextColor": Colors.white
-    // }
 };
   return getMuiTheme(baseLightTheme, overwrites);
 }
