@@ -102,14 +102,20 @@ def owner_city():
 @app.route("/api/owner-address", methods=["GET"])
 def owner_address():
     incoming = request.get_json()
+    # incoming = {'address_id': '250708301106'} for testing
     print(str(incoming), file=sys.stderr)
     address_id = incoming['address_id']
-    qry = """SELECT * FROM parcels WHERE parcel_id='%s'"""
+    qry = """SELECT ST_AsGeoJSON(geom) AS Coordinates, ST_Area(geom) AS Sqft FROM parcels WHERE parcel_id=%s;"""
     cur.execute(qry, (address_id,))
     rows = cur.fetchall()
+    output = {}
+    output['result'] = len(rows)
     if rows:
-        return jsonify(rows)
+        data = rows[0]
+        output['coordinates'] = data[0].split('"coordinates":')[1].replace('}','').replace('{','')
+        output['sqft'] = data[1]
+        return jsonify(output)
     else:
-        return 'Nothing Found'
+        return jsonify(output)
 
 
