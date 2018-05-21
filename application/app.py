@@ -4,6 +4,7 @@ from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
+import sys
 import psycopg2
 import geopandas as gpd
 #from shapely.geometry import Polygon, Point
@@ -13,11 +14,11 @@ import geopandas as gpd
 #from application.data_scraper.encoderz import my_encoder
 
 
-# try:
-#     conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
-#     cur = conn.cursor()
-# except:
-#     print('[Error] - app.py - connecting to database.')
+try:
+    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+    cur = conn.cursor()
+except:
+    print('[Error] - app.py - connecting to database.')
 
 @app.route('/', methods=['GET'])
 def index():
@@ -78,16 +79,32 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 
-@app.route("/howdy", methods=["GET"])
-def howdy():
-    #incoming = request.get_json()
-    cur.execute("""SELECT * FROM parcels WHERE sitaddcty=(%s) LIMIT 5""", ('ASPEN',))
+@app.route("/api/owner-city", methods=["GET"])
+def owner_city():
+    incoming = request.get_json()
+    print(str(incoming), file=sys.stderr)
+    owner_name = incoming['owner_name'].upper()
+    owner_city = incoming['owner_city'].upper()
+    qry = f"""SELECT DISTINCT(parcels.owner) as Owner, SUM(parcels.shape_area) as Area FROM parcels WHERE sitaddcty=('{str(owner_city)}') AND owner LIKE ('{str(owner_name)}') GROUP BY Owner LIMIT 50"""
+    cur.execute(qry)
     rows = cur.fetchall()
     if rows:
         return jsonify(rows)
     else:
         return 'Nothing Found'
 
-    # data = gpd.read_postgis(f"""SELECT * FROM parcels WHERE sitaddcty={incoming_string}""",
-    #                         con=conn)
-    # my_json = data.to_json()
+
+@app.route("/api/owner-address", methods=["GET"])
+def owner_address():
+    incoming = request.get_json()
+    print(str(incoming), file=sys.stderr)
+    address_id = incoming['address_id']
+    qry = f"""SELECT * FROM parcels WHERE parcel_id='{str(address_id)}'"""
+    cur.execute(qry)
+    rows = cur.fetchall()
+    if rows:
+        return jsonify(rows)
+    else:
+        return 'Nothing Found'
+
+
