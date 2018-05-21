@@ -82,16 +82,21 @@ def is_token_valid():
 @app.route("/api/owner-city", methods=["GET"])
 def owner_city():
     incoming = request.get_json()
+    #incoming = {'owner_name': 'Stoltzman', 'owner_city': '80526'} test case :)
     print(str(incoming), file=sys.stderr)
-    owner_name = incoming['owner_name'].upper()
-    owner_city = incoming['owner_city'].upper()
-    qry = """SELECT DISTINCT(parcels.owner) as Owner, SUM(parcels.shape_area) as Area FROM parcels WHERE sitaddcty=('%s') AND owner LIKE ('%s') GROUP BY Owner LIMIT 50"""
-    cur.execute(qry, (owner_name,owner_city,))
+    owner_name = str(incoming['owner_name']).upper()
+    owner_city = str(incoming['owner_city']).upper()
+    qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
+    cur.execute(qry, (owner_city, owner_name))
     rows = cur.fetchall()
+    output = {}
+    output['result'] = len(rows)
     if rows:
-        return jsonify(rows)
+        for row in rows:
+            output[row[3]] = f"{row[0]}, {row[1]}, {row[2]}"
+        return jsonify(output)
     else:
-        return 'Nothing Found'
+        return jsonify(output)
 
 
 @app.route("/api/owner-address", methods=["GET"])
@@ -100,7 +105,7 @@ def owner_address():
     print(str(incoming), file=sys.stderr)
     address_id = incoming['address_id']
     qry = """SELECT * FROM parcels WHERE parcel_id='%s'"""
-    cur.execute(qry,(address_id,))
+    cur.execute(qry, (address_id,))
     rows = cur.fetchall()
     if rows:
         return jsonify(rows)
