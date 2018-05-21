@@ -85,8 +85,8 @@ def owner_city():
     print(str(incoming), file=sys.stderr)
     owner_name = incoming['owner_name'].upper()
     owner_city = incoming['owner_city'].upper()
-    qry = f"""SELECT DISTINCT(parcels.owner) as Owner, SUM(parcels.shape_area) as Area FROM parcels WHERE sitaddcty=('{str(owner_city)}') AND owner LIKE ('{str(owner_name)}') GROUP BY Owner LIMIT 50"""
-    cur.execute(qry)
+    qry = """SELECT DISTINCT(parcels.owner) as Owner, SUM(parcels.shape_area) as Area FROM parcels WHERE sitaddcty=('%s') AND owner LIKE ('%s') GROUP BY Owner LIMIT 50"""
+    cur.execute(qry, (owner_name,owner_city,))
     rows = cur.fetchall()
     if rows:
         return jsonify(rows)
@@ -99,8 +99,8 @@ def owner_address():
     incoming = request.get_json()
     print(str(incoming), file=sys.stderr)
     address_id = incoming['address_id']
-    qry = f"""SELECT * FROM parcels WHERE parcel_id='{str(address_id)}'"""
-    cur.execute(qry)
+    qry = """SELECT * FROM parcels WHERE parcel_id='%s'"""
+    cur.execute(qry,(address_id,))
     rows = cur.fetchall()
     if rows:
         return jsonify(rows)
