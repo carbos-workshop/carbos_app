@@ -4,6 +4,7 @@ from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
+import sys
 import psycopg2
 import geopandas as gpd
 #from shapely.geometry import Polygon, Point
@@ -13,11 +14,11 @@ import geopandas as gpd
 #from application.data_scraper.encoderz import my_encoder
 
 
-# try:
-#     conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
-#     cur = conn.cursor()
-# except:
-#     print('[Error] - app.py - connecting to database.')
+try:
+    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+    cur = conn.cursor()
+except:
+    print('[Error] - app.py - connecting to database.')
 
 @app.route('/', methods=['GET'])
 def index():
@@ -78,16 +79,43 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 
-@app.route("/howdy", methods=["GET"])
-def howdy():
-    #incoming = request.get_json()
-    cur.execute("""SELECT * FROM parcels WHERE sitaddcty=(%s) LIMIT 5""", ('ASPEN',))
+@app.route("/api/owner-city", methods=["GET"])
+def owner_city():
+    incoming = request.get_json()
+    #incoming = {'owner_name': 'Stoltzman', 'owner_city': '80526'} test case :)
+    print(str(incoming), file=sys.stderr)
+    owner_name = str(incoming['owner_name']).upper()
+    owner_city = str(incoming['owner_city']).upper()
+    qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
+    cur.execute(qry, (owner_city, owner_name))
     rows = cur.fetchall()
+    output = {}
+    output['result'] = len(rows)
     if rows:
-        return jsonify(rows)
+        for row in rows:
+            output[row[3]] = f"{row[0]}, {row[1]}, {row[2]}"
+        return jsonify(output)
     else:
-        return 'Nothing Found'
+        return jsonify(output)
 
-    # data = gpd.read_postgis(f"""SELECT * FROM parcels WHERE sitaddcty={incoming_string}""",
-    #                         con=conn)
-    # my_json = data.to_json()
+
+@app.route("/api/owner-address", methods=["GET"])
+def owner_address():
+    incoming = request.get_json()
+    # incoming = {'address_id': '250708301106'} for testing
+    print(str(incoming), file=sys.stderr)
+    address_id = incoming['address_id']
+    qry = """SELECT ST_AsGeoJSON(geom) AS Coordinates, ST_Area(geom) AS Sqft FROM parcels WHERE parcel_id=%s;"""
+    cur.execute(qry, (address_id,))
+    rows = cur.fetchall()
+    output = {}
+    output['result'] = len(rows)
+    if rows:
+        data = rows[0]
+        output['coordinates'] = data[0].split('"coordinates":')[1].replace('}','').replace('{','')
+        output['sqft'] = data[1]
+        return jsonify(output)
+    else:
+        return jsonify(output)
+
+
