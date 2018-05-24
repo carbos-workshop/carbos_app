@@ -9,6 +9,7 @@ import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import MapTest from '../Map';
+import { post_address_id, post_owner_name_and_city } from '../../utils/new_project.js';
 
 import * as actionCreators from '../../actions/theme';
 
@@ -72,7 +73,11 @@ class NewProjectForm extends React.Component {
   }
 
   submit = () => {
-    console.log('submit function called with:', this.state.nameFieldValue, this.state.cityFieldValue, this.state.addressFieldValue )
+    // console.log('submit function called with:', this.state.nameFieldValue, this.state.cityFieldValue, this.state.addressFieldValue )
+    post_owner_name_and_city(this.state.nameFieldValue, this.state.cityFieldValue)
+      .then( res => {
+        console.log(res)
+      })
   }
 
   render() {
