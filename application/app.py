@@ -79,7 +79,7 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 
-@app.route("/api/owner-city", methods=["GET"])
+@app.route("/api/owner-city", methods=["POST"])
 def owner_city():
     incoming = request.get_json()
     #incoming = {'owner_name': 'Stoltzman', 'owner_city': '80526'} test case :)
@@ -99,7 +99,7 @@ def owner_city():
         return jsonify(output)
 
 
-@app.route("/api/owner-address", methods=["GET"])
+@app.route("/api/owner-address", methods=["POST"])
 def owner_address():
     incoming = request.get_json()
     # incoming = {'address_id': '250708301106'} for testing
@@ -117,5 +117,3 @@ def owner_address():
         return jsonify(output)
     else:
         return jsonify(output)
-
-
