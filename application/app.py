@@ -93,7 +93,7 @@ def owner_city():
     output['result'] = len(rows)
     if rows:
         for row in rows:
-            output[row[3]] = f"{row[0]}, {row[1]}, {row[2]}"
+            output[row[3]] = "{}, {}, {}".format((row[0],row[1],row[2]))
         return jsonify(output)
     else:
         return jsonify(output)
