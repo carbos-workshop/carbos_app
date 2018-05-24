@@ -15,7 +15,7 @@ import geopandas as gpd
 
 
 try:
-    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='932uhjfhsdaiouhfa987hr97hjnkjahbn4ifhaifuehJHFOEHOIUHEFho23h45'")
     cur = conn.cursor()
 except:
     print('[Error] - app.py - connecting to database.')
