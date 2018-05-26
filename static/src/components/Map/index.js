@@ -57,43 +57,54 @@ class MapTest extends Component {
   }
 
   render() {
-    const center = [51.505, -0.09]
+    // const center = [51.52, -0.1]
+    const center = this.props.coordinates ? this.props.coordinates[0] : [39.7392, -104.9903]
 
-    const polygon = [[51.515, -0.09], [51.52, -0.1], [51.52, -0.12]]
+    const polygon = this.props.coordinates ? this.props.coordinates : []
 
-    const multiPolygon = [
-      [[51.51, -0.12], [51.51, -0.13], [51.53, -0.13]],
-      [[51.51, -0.05], [51.51, -0.07], [51.53, -0.07]],
-    ]
+    // const multiPolygon = [
+    //   [[51.51, -0.12], [51.51, -0.13], [51.53, -0.13]],
+    //   [[51.51, -0.05], [51.51, -0.07], [51.53, -0.07]],
+    // ]
 
-    const rectangle = [[51.49, -0.08], [51.5, -0.06]]
+    // const rectangle = [[51.49, -0.08], [51.5, -0.06]]
 
-    const customMarker = new L.divIcon({className: 'tree'})
+    // const customMarker = new L.divIcon({className: 'tree'})
+
+    // <Marker
+    //   position={[51.5,-0.09]}
+    //   icon={ customMarker }
+    // >
+    //   <Popup>
+    //     <span>
+    //       a sample tree marker
+    //     </span>
+    //   </Popup>
+    // </Marker>
+    // <Polygon color={this.props.muiTheme.palette.accent1Color} positions={polygon} />
+    // <Polygon color={this.props.muiTheme.palette.accent1Color} positions={multiPolygon}>
+    // <Popup>
+    //   <span>Popup in Polygon</span>
+    // </Popup>
+    // </Polygon>
+    // <Rectangle bounds={rectangle} color={this.props.muiTheme.palette.primary1Color} />
 
     return (
-      <Map style={{height:'500px'}} center={center} zoom={13}>
+      <Map style={{height:'500px'}} center={center} zoom={16}>
         <TileLayer
           url={this.getUrlLink()}
         	attribution= '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
         	subdomains= 'abcd'
         />
-        <Marker
-          position={[51.5,-0.09]}
-          icon={ customMarker }
-        >
-          <Popup>
-            <span>
-              a sample tree marker
-            </span>
-          </Popup>
-        </Marker>
-        <Polygon color={this.props.muiTheme.palette.accent1Color} positions={polygon} />
-        <Polygon color={this.props.muiTheme.palette.accent1Color} positions={multiPolygon}>
+      <Polygon color={this.props.muiTheme.palette.primary1Color} positions={polygon}>
         <Popup>
-          <span>Popup in Polygon</span>
+          <div>
+            <span>Square Feet: {this.props.parcelData.sqft}</span>
+            <br/>
+            <span>Carbon Value: {this.props.parcelData.carbonValue}</span>
+          </div>
         </Popup>
-        </Polygon>
-        <Rectangle bounds={rectangle} color={this.props.muiTheme.palette.primary1Color} />
+      </Polygon>
       </Map>
     )
   }

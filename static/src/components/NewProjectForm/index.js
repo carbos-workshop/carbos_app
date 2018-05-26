@@ -8,8 +8,8 @@ import MenuItem from 'material-ui/MenuItem';
 import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import MapTest from '../Map';
-import { post_address_id, post_owner_name_and_city } from '../../utils/new_project.js';
+import MapWindow from '../Map';
+import { post_address_id, post_owner_name_and_zip } from '../../utils/new_project.js';
 
 import * as actionCreators from '../../actions/theme';
 
@@ -31,17 +31,14 @@ class NewProjectForm extends React.Component {
       this.state = {
         // currentTheme: this.props.currentTheme,
         nameFieldValue: '',
-        cityFieldValue: '',
+        zipFieldValue: '',
         addressFieldValue: '',
-        addresses:[{
-          name: '1234 Lane',
+        addresses:[],
+        addressCoordinates: null,
+        parcelData: {
+          sqft: 0,
+          carbonValue: 42,
         },
-        {
-          name: '5678 Place',
-        },
-        {
-          name: '91011 Drive',
-        }],
       };
   }
 
@@ -53,14 +50,13 @@ class NewProjectForm extends React.Component {
           })
           break
         }
-        case 'city':{
+        case 'zip':{
           this.setState({
-            cityFieldValue: e.target.value
+            zipFieldValue: e.target.value
           })
           break
         }
         case 'address':{
-          console.log(e)
           this.setState({
             addressFieldValue: e
           })
@@ -72,12 +68,41 @@ class NewProjectForm extends React.Component {
       }
   }
 
-  submit = () => {
-    // console.log('submit function called with:', this.state.nameFieldValue, this.state.cityFieldValue, this.state.addressFieldValue )
-    post_owner_name_and_city(this.state.nameFieldValue, this.state.cityFieldValue)
+  submitInfo = () => {
+    // console.log('submitInfo function called with:', this.state.nameFieldValue, this.state.zipFieldValue, this.state.addressFieldValue )
+    post_owner_name_and_zip(this.state.nameFieldValue, this.state.zipFieldValue)
       .then( res => {
-        console.log(res)
+        this.setState({
+          addresses: res.data
+        })
       })
+  }
+
+  submitAddress = () => {
+    post_address_id(this.state.addressFieldValue)
+      .then( res => {
+        this.setState({
+          addressCoordinates: this.formatCoordinateStringResponse(res.data.coordinates),
+          parcelData: {
+            sqft: res.data.sqft,
+            carbonValue: 42, //placeholder
+          }
+        })
+      })
+  }
+
+  //the endpoint for address_if returns an array that is currently a giant string.
+  //this method converts the string back into an actual array
+  formatCoordinateStringResponse = coordinateString => {
+    let coordinateStringArray = coordinateString.split('[')
+    let formattedCoordinateStringArray = coordinateStringArray.map( pair => {
+      return pair.slice(0,-2).split(',')
+    })
+    formattedCoordinateStringArray.shift()
+    let coordinateNumberArray = formattedCoordinateStringArray.map( coordinate => {
+      return [ Number(coordinate[0]), Number(coordinate[1]) ]
+    })
+    return coordinateNumberArray
   }
 
   render() {
@@ -109,7 +134,7 @@ class NewProjectForm extends React.Component {
 
         <Card style={styles.card}>
           <CardHeader
-            title={<h3 style={styles.cardHeader}>Identify Valid Parcel</h3>}
+            title={<h3 style={styles.cardHeader}>Identify Valid Parcel by Ownership</h3>}
             avatar={
               <Avatar
                color={'white'}
@@ -124,28 +149,31 @@ class NewProjectForm extends React.Component {
             <TextField
               style={styles.formField}
               floatingLabelText="Your Name"
+              fullWidth={true}
               onChange={(e)=> { this.updateValue(e, 'name') }}
               value={this.state.nameFieldValue}
             />
             <TextField
               style={styles.formField}
-              floatingLabelText="Your City"
-              onChange={(e)=> { this.updateValue(e, 'city') }}
-              value={this.state.cityFieldValue}
+              floatingLabelText="Your Zip Code"
+              fullWidth={true}
+              onChange={(e)=> { this.updateValue(e, 'zip') }}
+              value={this.state.zipFieldValue}
             />
             <RaisedButton
               style={styles.submitButton}
+              disabled={this.state.zipFieldValue === '' || this.state.nameFieldValue === ''}
               primary={true}
               fullWidth={true}
-              label="Submit Form"
-              onClick={this.submit}
+              label="Submit Owner Info"
+              onClick={this.submitInfo}
             />
           </CardText>
         </Card>
 
         <Card style={styles.card}>
           <CardHeader
-            title={<h3 style={styles.cardHeader}>Select Valid Property</h3>}
+            title={<h3 style={styles.cardHeader}>Select Valid Property Address</h3>}
             avatar={
               <Avatar
                color={'white'}
@@ -158,17 +186,26 @@ class NewProjectForm extends React.Component {
           </CardHeader>
           <CardText>
             <SelectField
-              floatingLabelText="Select a Valid Address"
+              fullWidth={true}
+              disabled={this.state.addresses.length <= 0}
+              floatingLabelText="Select Your Address"
               value={this.state.addressFieldValue}
               onChange={ (e, index, value)=> {this.updateValue(value, 'address')} }
             >
-              <MenuItem value={null} primaryText="" />
               {
                 this.state.addresses.map( (address, index) => (
-                  <MenuItem key={index} value={address.name} primaryText={address.name} />
+                  <MenuItem key={address.id} value={address.id} primaryText={address.address} />
                 ))
               }
             </SelectField>
+            <RaisedButton
+              disabled={this.state.addressFieldValue === ''}
+              style={styles.submitButton}
+              primary={true}
+              fullWidth={true}
+              label="Submit Selected Address"
+              onClick={this.submitAddress}
+            />
           </CardText>
         </Card>
 
@@ -186,7 +223,7 @@ class NewProjectForm extends React.Component {
           >
           </CardHeader>
           <CardText>
-            <MapTest />
+            <MapWindow coordinates={this.state.addressCoordinates} parcelData={this.state.parcelData}/>
           </CardText>
         </Card>
 
