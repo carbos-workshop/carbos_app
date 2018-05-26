@@ -162,6 +162,7 @@ class NewProjectForm extends React.Component {
             />
             <RaisedButton
               style={styles.submitButton}
+              disabled={this.state.zipFieldValue === '' || this.state.nameFieldValue === ''}
               primary={true}
               fullWidth={true}
               label="Submit Owner Info"
@@ -186,11 +187,11 @@ class NewProjectForm extends React.Component {
           <CardText>
             <SelectField
               fullWidth={true}
+              disabled={this.state.addresses.length <= 0}
               floatingLabelText="Select Your Address"
               value={this.state.addressFieldValue}
               onChange={ (e, index, value)=> {this.updateValue(value, 'address')} }
             >
-              <MenuItem value={null} primaryText="" />
               {
                 this.state.addresses.map( (address, index) => (
                   <MenuItem key={address.id} value={address.id} primaryText={address.address} />
@@ -198,6 +199,7 @@ class NewProjectForm extends React.Component {
               }
             </SelectField>
             <RaisedButton
+              disabled={this.state.addressFieldValue === ''}
               style={styles.submitButton}
               primary={true}
               fullWidth={true}
