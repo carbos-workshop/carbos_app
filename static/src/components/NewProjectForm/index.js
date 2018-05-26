@@ -124,12 +124,14 @@ class NewProjectForm extends React.Component {
             <TextField
               style={styles.formField}
               floatingLabelText="Your Name"
+              fullWidth={true}
               onChange={(e)=> { this.updateValue(e, 'name') }}
               value={this.state.nameFieldValue}
             />
             <TextField
               style={styles.formField}
               floatingLabelText="Your City"
+              fullWidth={true}
               onChange={(e)=> { this.updateValue(e, 'city') }}
               value={this.state.cityFieldValue}
             />
@@ -158,6 +160,7 @@ class NewProjectForm extends React.Component {
           </CardHeader>
           <CardText>
             <SelectField
+              fullWidth={true}
               floatingLabelText="Select a Valid Address"
               value={this.state.addressFieldValue}
               onChange={ (e, index, value)=> {this.updateValue(value, 'address')} }
