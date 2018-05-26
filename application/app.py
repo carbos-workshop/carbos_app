@@ -76,15 +76,15 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 
-@app.route("/api/owner-city", methods=["POST"])
+@app.route("/api/owner-info", methods=["POST"])
 def owner_city():
     incoming = request.get_json()
-    incoming = {'owner_name': 'Stoltzman', 'owner_city': '80526'} #test case :)
+    # incoming = {'owner_name': 'Stoltzman', 'owner_zip': '80526'} #test case :)
     print(str(incoming), file=sys.stderr)
     owner_name = str(incoming['owner_name']).upper()
-    owner_city = str(incoming['owner_city']).upper()
+    owner_zip = str(incoming['owner_zip']).upper()
     qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
-    cur.execute(qry, (owner_city, owner_name))
+    cur.execute(qry, (owner_zip, owner_name))
     rows = cur.fetchall()
     output_list = []
     if rows:
@@ -93,9 +93,9 @@ def owner_city():
             output_dict['id'] = row[3]
             output_dict['address'] = "{}, {}, {}".format(row[0],row[1],row[2])
             output_list.append(output_dict)
-            return output_list
+            return jsonify(output_list)
     else:
-        return output_list
+        return jsonify(output_list)
 
 
 @app.route("/api/owner-address", methods=["POST"])
