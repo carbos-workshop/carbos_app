@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import ProjectCard from './Projectcard';
+import ProjectCard from './ProjectCard';
 
 //for another page:
 import LeftNav from 'material-ui/Drawer';

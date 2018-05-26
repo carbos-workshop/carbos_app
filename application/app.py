@@ -6,19 +6,16 @@ from .utils.auth import generate_token, requires_auth, verify_token
 
 import sys
 import psycopg2
-import geopandas as gpd
-#from shapely.geometry import Polygon, Point
-#from geopandas.geoseries import GeoSeries
+import os
 
-#from application.data_scraper.boulder import get_parcel_data, get_tree_data, get_building_data
-#from application.data_scraper.encoderz import my_encoder
-
+DB_CONNECT = os.environ['DB_CONNECT']
 
 try:
-    conn = psycopg2.connect("dbname='carbos' user='gocoder' host='localhost' password='gocoder2018'")
+    conn = psycopg2.connect(DB_CONNECT)
     cur = conn.cursor()
 except:
     print('[Error] - app.py - connecting to database.')
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -82,37 +79,41 @@ def is_token_valid():
 @app.route("/api/owner-city", methods=["POST"])
 def owner_city():
     incoming = request.get_json()
-    #incoming = {'owner_name': 'Stoltzman', 'owner_city': '80526'} test case :)
+    incoming = {'owner_name': 'Stoltzman', 'owner_city': '80526'} #test case :)
     print(str(incoming), file=sys.stderr)
     owner_name = str(incoming['owner_name']).upper()
     owner_city = str(incoming['owner_city']).upper()
     qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
     cur.execute(qry, (owner_city, owner_name))
     rows = cur.fetchall()
-    output = {}
-    output['result'] = len(rows)
+    output_list = []
     if rows:
         for row in rows:
-            output[row[3]] = f"{row[0]}, {row[1]}, {row[2]}"
-        return jsonify(output)
+            output_dict = {}
+            output_dict['id'] = row[3]
+            output_dict['address'] = "{}, {}, {}".format(row[0],row[1],row[2])
+            output_list.append(output_dict)
+            return output_list
     else:
-        return jsonify(output)
+        return output_list
 
 
 @app.route("/api/owner-address", methods=["POST"])
 def owner_address():
     incoming = request.get_json()
-    # incoming = {'address_id': '250708301106'} for testing
+    # incoming = {'address_id': '9733105061'} #for testing
     print(str(incoming), file=sys.stderr)
     address_id = incoming['address_id']
-    qry = """SELECT ST_AsGeoJSON(geom) AS Coordinates, ST_Area(geom) AS Sqft FROM parcels WHERE parcel_id=%s;"""
+    qry = """SELECT ST_AsText(ST_FlipCoordinates(ST_Transform(geom, 4326))) AS Coordinates, ST_Area(geom) AS Sqft FROM parcels WHERE parcel_id=%s;"""
     cur.execute(qry, (address_id,))
     rows = cur.fetchall()
+
     output = {}
-    output['result'] = len(rows)
     if rows:
         data = rows[0]
-        output['coordinates'] = data[0].split('"coordinates":')[1].replace('}','').replace('{','')
+        tmp = data[0].split('MULTIPOLYGON(((')[1].replace(')','').replace('(','')
+        tmp2 = '[' + tmp.replace(',','],[').replace(' ', ',') + ']'
+        output['coordinates'] = tmp2
         output['sqft'] = data[1]
         return jsonify(output)
     else:
