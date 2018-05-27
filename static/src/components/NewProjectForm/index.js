@@ -91,6 +91,10 @@ class NewProjectForm extends React.Component {
       })
   }
 
+  submitProject = () => {
+    console.log('submitting project')
+  }
+
   //the endpoint for address_if returns an array that is currently a giant string.
   //this method converts the string back into an actual array
   formatCoordinateStringResponse = coordinateString => {
@@ -124,7 +128,13 @@ class NewProjectForm extends React.Component {
       },
       submitButton: {
         marginTop:'2em',
-      }
+      },
+      p: {
+        textAlign: 'center',
+      },
+      deploymentDiv : {
+        margin: '1em 0',
+      },
     }
 
     return (
@@ -148,7 +158,7 @@ class NewProjectForm extends React.Component {
           <CardText>
             <TextField
               style={styles.formField}
-              floatingLabelText="Your Name"
+              floatingLabelText="Your Last Name"
               fullWidth={true}
               onChange={(e)=> { this.updateValue(e, 'name') }}
               value={this.state.nameFieldValue}
@@ -224,6 +234,58 @@ class NewProjectForm extends React.Component {
           </CardHeader>
           <CardText>
             <MapWindow coordinates={this.state.addressCoordinates} parcelData={this.state.parcelData}/>
+          </CardText>
+        </Card>
+
+        <Card style={styles.card}>
+          <CardHeader
+            title={<h3 style={styles.cardHeader}>Project Additionalities</h3>}
+            avatar={
+              <Avatar
+               color={'white'}
+               backgroundColor={this.props.muiTheme.palette.primary1Color}
+               >
+               4
+              </Avatar>
+            }
+          >
+          </CardHeader>
+          <CardText>
+            <p style={styles.p}> This feature is in development </p>
+            <RaisedButton
+              disabled={true}
+              style={styles.submitButton}
+              primary={true}
+              fullWidth={true}
+              label="Submit Additionalities"
+            />
+          </CardText>
+        </Card>
+
+        <Card style={styles.card}>
+          <CardHeader
+            title={<h3 style={styles.cardHeader}>Project Deployment</h3>}
+            avatar={
+              <Avatar
+               color={'white'}
+               backgroundColor={this.props.muiTheme.palette.primary1Color}
+               >
+               5
+              </Avatar>
+            }
+          >
+          </CardHeader>
+          <CardText>
+            <RaisedButton
+              disabled={false}
+              onClick={this.submitProject}
+              primary={true}
+              fullWidth={true}
+              label="Deploy Project"
+            />
+            <div style={styles.deploymentDiv}>
+              <h4> Deployment Information: </h4>
+            </div>
           </CardText>
         </Card>
 

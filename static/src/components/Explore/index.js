@@ -64,13 +64,19 @@ class Explore extends React.Component {
 
   render() {
 
-    const style = {
+    const styles = {
       // nav: {
       //   zIndex: '0',
       //   paddingTop: '64px',
       // },
       title: {
         margin:'2.2em 0',
+        color: this.props.muiTheme.palette.textColor,
+      },
+      p: {
+        margin: '2em',
+        textAlign: 'center',
+        color: this.props.muiTheme.palette.textColor,
       },
     }
 
@@ -81,8 +87,8 @@ class Explore extends React.Component {
 
 return (
       <div className="container">
-        <div style={style.title}>
-          <h2 style={{color: this.props.muiTheme.palette.textColor}}>Project Explorer</h2>
+        <div style={styles.title}>
+          <h2>Project Explorer</h2>
         </div>
 
         <Tabs inkBarStyle={this.createTabInkBarStyle()}>
@@ -105,12 +111,12 @@ return (
           </Tab>
           <Tab label="Approved" >
             <div>
-              
+              <p style={styles.p}>This feature is in development.</p>
             </div>
           </Tab>
           <Tab label="Pending" >
             <div>
-
+              <p style={styles.p}>This feature is in development.</p>
             </div>
           </Tab>
         </Tabs>

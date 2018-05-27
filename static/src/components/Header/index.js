@@ -115,22 +115,19 @@ class Header extends React.Component {
                                   Explore
                               </MenuItem>
                               <MenuItem onClick={() => this.dispatchNewRoute('/new/project')}>
-                                  New Project
+                                  Project Creation MVP
                               </MenuItem>
                             </div>
                             :
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/analytics')}>
-                                    Analytics
-                                </MenuItem>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/explore')}>
                                     Explore
                                 </MenuItem>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/new/project')}>
-                                    New Project
+                                    Project Creation MVP
                                 </MenuItem>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/main')}>
-                                    Dashboard
+                                    Home
                                 </MenuItem>
                                 <Divider />
 
