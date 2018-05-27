@@ -120,9 +120,6 @@ class Header extends React.Component {
                             </div>
                             :
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/analytics')}>
-                                    Analytics
-                                </MenuItem>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/explore')}>
                                     Explore
                                 </MenuItem>
@@ -130,7 +127,7 @@ class Header extends React.Component {
                                     Project Creation MVP
                                 </MenuItem>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/main')}>
-                                    Dashboard
+                                    Home
                                 </MenuItem>
                                 <Divider />
 

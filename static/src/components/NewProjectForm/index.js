@@ -158,7 +158,7 @@ class NewProjectForm extends React.Component {
           <CardText>
             <TextField
               style={styles.formField}
-              floatingLabelText="Your Name"
+              floatingLabelText="Your Last Name"
               fullWidth={true}
               onChange={(e)=> { this.updateValue(e, 'name') }}
               value={this.state.nameFieldValue}
@@ -251,7 +251,7 @@ class NewProjectForm extends React.Component {
           >
           </CardHeader>
           <CardText>
-            <p style={styles.p}> This feature is still in development </p>
+            <p style={styles.p}> This feature is in development </p>
             <RaisedButton
               disabled={true}
               style={styles.submitButton}
