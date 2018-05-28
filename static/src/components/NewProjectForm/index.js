@@ -10,6 +10,10 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import MapWindow from '../Map';
 import { post_address_id, post_owner_name_and_zip } from '../../utils/new_project.js';
+import { get_contract, test_things } from '../../utils/web3.js';
+
+import Web3 from 'web3';
+
 
 import * as actionCreators from '../../actions/theme';
 
@@ -36,8 +40,13 @@ class NewProjectForm extends React.Component {
         addresses:[],
         addressCoordinates: null,
         parcelData: {
-          sqft: 0,
-          carbonValue: 42,
+          sqft: null,
+          carbonValue: null,
+        },
+        parcelContractInfo: {
+          holder: null,
+          amount: null,
+          geoLocation: null,
         },
       };
   }
@@ -92,7 +101,23 @@ class NewProjectForm extends React.Component {
   }
 
   submitProject = () => {
-    console.log('submitting project')
+    let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/'));
+    test_things()
+      .then( res => {
+        let abi = JSON.parse(res.data.result)
+        let tempAddress = web3.eth.accounts.create() //TEMP
+        let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
+        let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
+
+        // Carbos.methods.createProject(tempAddress.address, this.state.parcelData.carbonValue, /*TEMP*/ this.state.addressCoordinates[0][0] /*TEMP*/)
+        let test =  web3.utils.toChecksumAddress('0x652634051cb3c72799e724de51a5a7a8a916f986')
+        console.log(test)
+        // web3.eth.getTransaction('0x874ff6b7447e9463224343522c99939bceaf9ea6a68a523f348608bd28d0df67')
+        //   .then(console.log)
+        Carbos.methods.getProject("0x652634051cb3c72799e724de51a5a7a8a916f986")
+          .call()
+            .then(result => { console.log(result) })
+      })
   }
 
   //the endpoint for address_if returns an array that is currently a giant string.
@@ -285,6 +310,9 @@ class NewProjectForm extends React.Component {
             />
             <div style={styles.deploymentDiv}>
               <h4> Deployment Information: </h4>
+              <p>{this.state.parcelContractInfo.holder}</p>
+              <p>{this.state.parcelContractInfo.amount}</p>
+              <p>{this.state.parcelContractInfo.geoLocation}</p>
             </div>
           </CardText>
         </Card>

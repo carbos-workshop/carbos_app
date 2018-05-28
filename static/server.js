@@ -2,6 +2,7 @@ const http = require('http');
 const express = require('express');
 const httpProxy = require('http-proxy');
 const path = require('path');
+// const Web3 = require('web3');
 
 const proxy = httpProxy.createProxyServer({});
 
@@ -33,7 +34,6 @@ app.all(/^\/api\/(.*)/, (req, res) => {
 app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
 });
-
 
 const server = http.createServer(app);
 server.listen(process.env.PORT || 3000, () => {
