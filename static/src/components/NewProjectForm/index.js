@@ -10,6 +10,10 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import MapWindow from '../Map';
 import { post_address_id, post_owner_name_and_zip } from '../../utils/new_project.js';
+import { get_contract, test_things } from '../../utils/web3.js';
+
+import Web3 from 'web3';
+
 
 import * as actionCreators from '../../actions/theme';
 
@@ -92,7 +96,13 @@ class NewProjectForm extends React.Component {
   }
 
   submitProject = () => {
-    console.log('submitting project')
+    let web3 = new Web3(new Web3.providers.HttpProvider());
+    test_things()
+      .then( res => {
+        let abi = JSON.parse(res.data.result)
+        let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
+        console.log(Carbos)
+      })
   }
 
   //the endpoint for address_if returns an array that is currently a giant string.
