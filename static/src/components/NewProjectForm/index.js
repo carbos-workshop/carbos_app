@@ -108,22 +108,7 @@ class NewProjectForm extends React.Component {
         let tempAddress = web3.eth.accounts.create() //TEMP
         let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
         let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
-        // createProjectEvent.on('data', (error,res) => {
-        //   console.log(res)
-        //
-        //   let blockHash = result.blockHash
-        //   console.log(blockHash)
-        //
-        //   this.setState({
-        //     parcelContractInfo: {
-        //       holder: res.args.holder,
-        //       amount: res.args.amount,
-        //       geoLocation: res.args.geoLocation,
-        //     }
-        //   })
-        //
-        // })
-        // console.log(web3)
+
         // Carbos.methods.createProject(tempAddress.address, this.state.parcelData.carbonValue, /*TEMP*/ this.state.addressCoordinates[0][0] /*TEMP*/)
         let test =  web3.utils.toChecksumAddress('0x652634051cb3c72799e724de51a5a7a8a916f986')
         console.log(test)
