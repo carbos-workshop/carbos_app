@@ -79,7 +79,7 @@ def is_token_valid():
 @app.route("/api/owner-info", methods=["POST"])
 def owner_city():
     incoming = request.get_json()
-    # incoming = {'owner_name': 'Stoltzman', 'owner_zip': '80526'} #test case :)
+    # incoming = {'owner_name': 'Smith', 'owner_zip': '80526'} #test case
     print(str(incoming), file=sys.stderr)
     owner_name = str(incoming['owner_name']).upper()
     owner_zip = str(incoming['owner_zip']).upper()
@@ -113,7 +113,13 @@ def owner_address():
         data = rows[0]
         tmp = data[0].split('MULTIPOLYGON(((')[1].replace(')','').replace('(','')
         tmp2 = '[' + tmp.replace(',','],[').replace(' ', ',') + ']'
-        output['coordinates'] = tmp2
+        tmp3 = tmp2.replace('[', '').split('],')
+        tmp4 = []
+        for s in tmp3:
+            tmp5 = map(float, s.replace(']','').split(','))
+            tmp4.append(list(tmp5))
+        tmp4 = [map(float, s.replace(']','').split(',')) for s in tmp3]
+        output['coordinates'] = tmp4
         output['sqft'] = data[1]
         return jsonify(output)
     else:
