@@ -94,7 +94,8 @@ def owner_city():
                 output_dict['id'] = row[3]
                 output_dict['address'] = "{}, {}, {}".format(row[0],row[1],row[2])
                 output_list.append(output_dict)
-                return jsonify(output_list)
+            print(str(output_list), file=sys.stderr)
+            return jsonify(output_list)
     except Exception as e:
         conn.rollback()
         return jsonify({'result': 'problem'})
@@ -125,10 +126,11 @@ def owner_address():
                 tmp5 = map(float, s.replace(']','').split(','))
                 tmp4.append(list(tmp5))
             tmp4 = [map(float, s.replace(']','').split(',')) for s in tmp3]
-            output['coordinates'] = tmp4
+            output['coordinates'] = tmp2
             output['sqft'] = data[1]
             output['ruca'] = float(data[2])
             output['carbon_index'] = (11-float(data[2])) * data[1] # (11 - ruca) is because 1-10 scale of ruca is reversed
+            print(str(output), file=sys.stderr)
             return jsonify(output)
     except Exception as e:
         conn.rollback()
