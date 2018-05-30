@@ -128,7 +128,10 @@ def owner_address():
             tmp4 = [map(float, s.replace(']','').split(',')) for s in tmp3]
             output['coordinates'] = tmp4
             output['sqft'] = data[1]
-            output['ruca'] = float(data[2])
+            if data[2]:
+                output['ruca'] = float(data[2])
+            else:
+                output['ruca'] = 1 # No information will provide lowest possible outcome
             output['carbon_index'] = (11-float(data[2])) * data[1] # (11 - ruca) is because 1-10 scale of ruca is reversed
             print(str(output), file=sys.stderr)
             return jsonify(output)
