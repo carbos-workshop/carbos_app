@@ -15,6 +15,8 @@ import { get_contract, test_things } from '../../utils/web3.js';
 import Web3 from 'web3';
 import Tx from 'ethereumjs-tx'
 
+import cssStyles from './styles.scss'
+
 import * as actionCreators from '../../actions/theme';
 
 function mapStateToProps(state) {
@@ -34,6 +36,7 @@ class NewProjectForm extends React.Component {
       super(props);
       this.state = {
         // currentTheme: this.props.currentTheme,
+        awaitingBlock: false,
         nameFieldValue: '',
         zipFieldValue: '',
         addressFieldValue: '',
@@ -103,6 +106,9 @@ class NewProjectForm extends React.Component {
   }
 
   submitProject = () => {
+    this.setState({
+      awatingBlock: true,
+    })
     let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/Z94APTDSX23QQ338SKR8CC1GUPYS8EDDVA'));
     test_things()
       .then( res => {
@@ -240,6 +246,11 @@ class NewProjectForm extends React.Component {
       deploymentDiv : {
         margin: '1em 0',
       },
+      loading:{
+        display: 'flex',
+        // flexDirection: 'column',
+        justifyContent: 'center',
+      }
     }
 
     return (
@@ -394,10 +405,11 @@ class NewProjectForm extends React.Component {
                 ?
                 <div>
                   <h4> Deployment Information: </h4>
-                  <p><a href={"https://ropsten.etherscan.io/tx/" + this.state.transactionHash}>View Transaction on Etherscan</a></p>
+                  <p className="link"><a href={"https://ropsten.etherscan.io/tx/" + this.state.transactionHash}>View Transaction on Etherscan</a></p>
                   <p>Transaction Hash: {this.state.transactionHash}</p>
                   {
-                    this.state.parcelContractInfo.amount ?
+                    this.state.parcelContractInfo.amount
+                    ?
                     <div>
                       <p>Number of confirmations: {this.state.confirmations}</p>
                       <p>Contract Owner Address: {this.state.parcelContractInfo.holder}</p>
@@ -408,11 +420,19 @@ class NewProjectForm extends React.Component {
                     <div>
                       <p>Waiting for Confirmation Blocks...</p>
                       <p>(This can take anywhere from 30 seconds to 5 minutes)</p>
+                      <div className="loading-ring"></div>
                     </div>
                   }
                 </div>
                 :
-                null
+                <div style={styles.loading}>
+                  {
+                    (this.state.awatingBlock && !this.state.transactionHash)
+                    ?
+                    <div className="loading-ring"></div>
+                    : null
+                  }
+                </div>
               }
             </div>
           </CardText>
