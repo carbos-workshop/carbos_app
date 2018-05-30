@@ -48,6 +48,8 @@ class NewProjectForm extends React.Component {
           amount: null,
           geoLocation: null,
         },
+        confirmations: 0,
+        transactionHash:null,
       };
   }
 
@@ -94,7 +96,7 @@ class NewProjectForm extends React.Component {
           addressCoordinates: this.formatCoordinateStringResponse(res.data.coordinates),
           parcelData: {
             sqft: res.data.sqft,
-            carbonValue: res.data.carbon_index, //placeholder
+            carbonValue: res.data.carbon_index,
           }
         })
       })
@@ -105,15 +107,15 @@ class NewProjectForm extends React.Component {
     test_things()
       .then( res => {
         let abi = JSON.parse(res.data.result)
-       let tempAddress = web3.eth.accounts.create() //TEMP
+        let tempAddress = web3.eth.accounts.create()
         let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
-        //let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
 
-        console.log('sending', {
+        let payload = {
           address: tempAddress.address,
-          value: this.state.parcelData.carbonValue,
-    //      coordinates:  /*TEMP*/ this.state.addressCoordinates[0][0], /*TEMP*/
-        })
+          value: Math.floor(this.state.parcelData.carbonValue),
+          coordinates:  /*TEMP*/ Math.floor(this.state.addressCoordinates[0][0] * 10e12), /*TEMP*/
+        }
+        console.log('sending transaction with payload: ', payload )
 
         //---------------- raw transaction stuff-------------------------
 
@@ -124,43 +126,15 @@ class NewProjectForm extends React.Component {
         // the destination address
         const contractAddress = '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6' //contrct
 
-        // Signs the given transaction data and sends it. Abstracts some of the details
-        // of buffering and serializing the transaction for web3.
-        // function sendSigned(txData, cb) {
-          // const privateKey = new Buffer(privKey, 'hex')
-          // const transaction = new Tx(txData)
-          // transaction.sign(privateKey)
-          // const serializedTx = transaction.serialize().toString('hex')
-        //   web3.eth.sendSignedTransaction('0x' + serializedTx, cb)
-        // }
-        //
         // // get the number of transactions sent so far so we can create a fresh nonce
         web3.eth.getTransactionCount(addressFrom).then(txCount => {
-        //
-        //   // construct the transaction data
-        //   const txData = {
-        //     nonce: web3.utils.toHex(txCount),
-        //     gasLimit: web3.utils.toHex(25000),
-        //     gasPrice: web3.utils.toHex(30e9), // 10 Gwei
-        //     to: addressTo,
-        //     from: addressFrom,
-        //     data: (tempAddress.address, 42, 0.0001)
-        //   }
-        //
-        //   // fire away!
-        //   sendSigned(txData, function(err, result) {
-        //     if (err) return console.log('error', err)
-        //     console.log('sent', result)
-        //   })
-
-        // let myContract = new web3.eth.Contract(abi, contractAddress);
-        let data = Carbos.methods.createProject(tempAddress.address, 42, 0.0001).encodeABI();
+        let data = Carbos.methods.createProject(payload.address, payload.value, payload.coordinates).encodeABI(); //get and package methods for transaction
         let rawTx = {
             nonce: web3.utils.toHex(txCount),
             gasPrice: web3.utils.toHex(10e9), // 10 Gwei
-            gasLimit: web3.utils.toHex(80000),
+            gasLimit: web3.utils.toHex(100000),
             to: contractAddress,
-            // "value": "0x00",
+            // "value": "0x00", //not for non-transactional contract methods
             data: data,
         }
         const privateKey = new Buffer(privKey, 'hex')
@@ -168,28 +142,62 @@ class NewProjectForm extends React.Component {
         transaction.sign(privateKey)
         const serializedTx = '0x' + transaction.serialize().toString('hex')
         web3.eth.sendSignedTransaction(serializedTx)
-
-        .on('transactionHash', function (txHash) {
-          console.log(txHash)
-        }).on('receipt', function (receipt) {
-            // console.log("receipt:", receipt);
-        }).on('confirmation', function (confirmationNumber, receipt) {
-            // console.log("confirmationNumber:", confirmationNumber," receipt:", receipt);
-            // web3.eth.getTransaction("0xb5498875e545f0cc0fe18fe7eddc5cc5e4012e306c08af9fec49fd1cfb886591")
-            //   .then(console.log)
-            console.log('getting project')
+          .on('transactionHash',txHash => {
+            this.setState({
+              transactionHash: txHash,
+            })
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
+            this.setState({
+              confirmations: this.state.confirmations + 1
+            })
             Carbos.methods.getProject(tempAddress.address)
               .call()
-                .then(console.log)
-        }).on('error', function (error) {
-          // console.log(error)
-        });
-      });//txCount end
+                .then(res => {
+                  this.setState({
+                    parcelContractInfo: {
+                      holder: tempAddress.address,
+                      amount: res.carbonValue,
+                      geoLocation: res.geoLocation,
+                    }
+                  })
+                })
+          }).on('error', (error) => {
+            console.log(error)
+          })
+      })//txCount end
 
 
 
         //---------------------------------------------------------------
       })
+  }
+
+  storePromiseResponse = (paylod, type) => {
+    switch(type){
+      case 'txHash':{
+        this.setState({
+          transactionHash: payload,
+        })
+        break
+      }
+      case 'confirmation':{
+        this.setState({
+          confirmations: this.state.confirmations + payload
+        })
+        break
+      }
+      case 'contractInfo':{
+        this.setState({
+          parcelContractInfo: {
+            holder: tempAddress.address,
+            amount: res.data.carbonValue,
+            geoLocation: res.data.geoLocation,
+          }
+        })
+        break
+      }
+    }
   }
 
   //the endpoint for address_if returns an array that is currently a giant string.
@@ -381,10 +389,31 @@ class NewProjectForm extends React.Component {
               label="Deploy Project"
             />
             <div style={styles.deploymentDiv}>
-              <h4> Deployment Information: </h4>
-              <p>{this.state.parcelContractInfo.holder}</p>
-              <p>{this.state.parcelContractInfo.amount}</p>
-              <p>{this.state.parcelContractInfo.geoLocation}</p>
+              {
+                this.state.transactionHash
+                ?
+                <div>
+                  <h4> Deployment Information: </h4>
+                  <p><a href={"https://ropsten.etherscan.io/tx/" + this.state.transactionHash}>View Transaction on Etherscan</a></p>
+                  <p>Transaction Hash: {this.state.transactionHash}</p>
+                  {
+                    this.state.parcelContractInfo.amount ?
+                    <div>
+                      <p>Number of confirmations: {this.state.confirmations}</p>
+                      <p>Contract Owner Address: {this.state.parcelContractInfo.holder}</p>
+                      <p>Potential Carbon Index: {this.state.parcelContractInfo.amount}</p>
+                      <p>GeoCode: {this.state.parcelContractInfo.geoLocation}</p>
+                    </div>
+                    :
+                    <div>
+                      <p>Waiting for Confirmation Blocks...</p>
+                      <p>(This can take anywhere from 30 seconds to 5 minutes)</p>
+                    </div>
+                  }
+                </div>
+                :
+                null
+              }
             </div>
           </CardText>
         </Card>
