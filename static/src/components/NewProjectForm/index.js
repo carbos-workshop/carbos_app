@@ -13,7 +13,7 @@ import { post_address_id, post_owner_name_and_zip } from '../../utils/new_projec
 import { get_contract, test_things } from '../../utils/web3.js';
 
 import Web3 from 'web3';
-
+import Tx from 'ethereumjs-tx'
 
 import * as actionCreators from '../../actions/theme';
 
@@ -105,31 +105,90 @@ class NewProjectForm extends React.Component {
     test_things()
       .then( res => {
         let abi = JSON.parse(res.data.result)
-        let tempAddress = web3.eth.accounts.create() //TEMP
+       let tempAddress = web3.eth.accounts.create() //TEMP
         let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
-        let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
+        //let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
 
         console.log('sending', {
           address: tempAddress.address,
           value: this.state.parcelData.carbonValue,
     //      coordinates:  /*TEMP*/ this.state.addressCoordinates[0][0], /*TEMP*/
         })
-        console.log(web3)
 
-        Carbos.methods.createProject("0x920E54ba8fABf39A19B644655745786254f8ebd1", 7604.69544501745, 39.5913516676769)
-          .send({
-            from: '0x652634051Cb3c72799E724DE51a5A7A8A916f986',
-            gasPrice: '500000',
-            gas: 10000000,
-          }) .then((error,result) => { console.log(error);console.log(result) })
+        //---------------- raw transaction stuff-------------------------
 
-        //let test =  web3.utils.toChecksumAddress('0x652634051cb3c72799e724de51a5a7a8a916f986')
-        //console.log(test)
-        // web3.eth.getTransaction('0x874ff6b7447e9463224343522c99939bceaf9ea6a68a523f348608bd28d0df67')
-        //   .then(console.log)
-        Carbos.methods.getProject("0x652634051cb3c72799e724de51a5a7a8a916f986")
-         .call()
-           .then(result => { console.log(result) })
+        // the address that will send the test transaction
+        const addressFrom = '0x652634051cb3c72799e724de51a5a7a8a916f986' //dummy wallet
+        const privKey = 'ea42d3b3b8418979fe176ee5821714b4587dde7edb6db4a6e019a47a5765d083'
+
+        // the destination address
+        const contractAddress = '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6' //contrct
+
+        // Signs the given transaction data and sends it. Abstracts some of the details
+        // of buffering and serializing the transaction for web3.
+        // function sendSigned(txData, cb) {
+          // const privateKey = new Buffer(privKey, 'hex')
+          // const transaction = new Tx(txData)
+          // transaction.sign(privateKey)
+          // const serializedTx = transaction.serialize().toString('hex')
+        //   web3.eth.sendSignedTransaction('0x' + serializedTx, cb)
+        // }
+        //
+        // // get the number of transactions sent so far so we can create a fresh nonce
+        web3.eth.getTransactionCount(addressFrom).then(txCount => {
+        //
+        //   // construct the transaction data
+        //   const txData = {
+        //     nonce: web3.utils.toHex(txCount),
+        //     gasLimit: web3.utils.toHex(25000),
+        //     gasPrice: web3.utils.toHex(30e9), // 10 Gwei
+        //     to: addressTo,
+        //     from: addressFrom,
+        //     data: (tempAddress.address, 42, 0.0001)
+        //   }
+        //
+        //   // fire away!
+        //   sendSigned(txData, function(err, result) {
+        //     if (err) return console.log('error', err)
+        //     console.log('sent', result)
+        //   })
+
+        // let myContract = new web3.eth.Contract(abi, contractAddress);
+        let data = Carbos.methods.createProject(tempAddress.address, 42, 0.0001).encodeABI();
+        let rawTx = {
+            nonce: web3.utils.toHex(txCount),
+            gasPrice: web3.utils.toHex(10e9), // 10 Gwei
+            gasLimit: web3.utils.toHex(80000),
+            to: contractAddress,
+            // "value": "0x00",
+            data: data,
+        }
+        const privateKey = new Buffer(privKey, 'hex')
+        const transaction = new Tx(rawTx)
+        transaction.sign(privateKey)
+        const serializedTx = '0x' + transaction.serialize().toString('hex')
+        web3.eth.sendSignedTransaction(serializedTx)
+
+        .on('transactionHash', function (txHash) {
+          console.log(txHash)
+        }).on('receipt', function (receipt) {
+            // console.log("receipt:", receipt);
+        }).on('confirmation', function (confirmationNumber, receipt) {
+            // console.log("confirmationNumber:", confirmationNumber," receipt:", receipt);
+            // web3.eth.getTransaction("0xb5498875e545f0cc0fe18fe7eddc5cc5e4012e306c08af9fec49fd1cfb886591")
+            //   .then(console.log)
+            console.log('getting project')
+            Carbos.methods.getProject(tempAddress.address)
+              .call()
+                .then(console.log)
+        }).on('error', function (error) {
+          // console.log(error)
+        });
+      });//txCount end
+
+
+
+        //---------------------------------------------------------------
       })
   }
 
