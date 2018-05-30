@@ -126,7 +126,7 @@ def owner_address():
                 tmp5 = map(float, s.replace(']','').split(','))
                 tmp4.append(list(tmp5))
             tmp4 = [map(float, s.replace(']','').split(',')) for s in tmp3]
-            output['coordinates'] = tmp4
+            output['coordinates'] = tmp2
             output['sqft'] = data[1]
             if data[2]:
                 output['ruca'] = float(data[2])

@@ -13,7 +13,9 @@ import { post_address_id, post_owner_name_and_zip } from '../../utils/new_projec
 import { get_contract, test_things } from '../../utils/web3.js';
 
 import Web3 from 'web3';
+import Tx from 'ethereumjs-tx'
 
+import cssStyles from './styles.scss'
 
 import * as actionCreators from '../../actions/theme';
 
@@ -34,6 +36,7 @@ class NewProjectForm extends React.Component {
       super(props);
       this.state = {
         // currentTheme: this.props.currentTheme,
+        awaitingBlock: false,
         nameFieldValue: '',
         zipFieldValue: '',
         addressFieldValue: '',
@@ -48,6 +51,8 @@ class NewProjectForm extends React.Component {
           amount: null,
           geoLocation: null,
         },
+        confirmations: 0,
+        transactionHash:null,
       };
   }
 
@@ -94,30 +99,111 @@ class NewProjectForm extends React.Component {
           addressCoordinates: this.formatCoordinateStringResponse(res.data.coordinates),
           parcelData: {
             sqft: res.data.sqft,
-            carbonValue: 42, //placeholder
+            carbonValue: res.data.carbon_index,
           }
         })
       })
   }
 
   submitProject = () => {
-    let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/'));
+    this.setState({
+      awatingBlock: true,
+    })
+    let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/Z94APTDSX23QQ338SKR8CC1GUPYS8EDDVA'));
     test_things()
       .then( res => {
         let abi = JSON.parse(res.data.result)
-        let tempAddress = web3.eth.accounts.create() //TEMP
+        let tempAddress = web3.eth.accounts.create()
         let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
-        let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
 
-        // Carbos.methods.createProject(tempAddress.address, this.state.parcelData.carbonValue, /*TEMP*/ this.state.addressCoordinates[0][0] /*TEMP*/)
-        let test =  web3.utils.toChecksumAddress('0x652634051cb3c72799e724de51a5a7a8a916f986')
-        console.log(test)
-        // web3.eth.getTransaction('0x874ff6b7447e9463224343522c99939bceaf9ea6a68a523f348608bd28d0df67')
-        //   .then(console.log)
-        Carbos.methods.getProject("0x652634051cb3c72799e724de51a5a7a8a916f986")
-          .call()
-            .then(result => { console.log(result) })
+        let payload = {
+          address: tempAddress.address,
+          value: Math.floor(this.state.parcelData.carbonValue),
+          coordinates:  /*TEMP*/ Math.floor(this.state.addressCoordinates[0][0] * 10e12), /*TEMP*/
+        }
+        console.log('sending transaction with payload: ', payload )
+
+        //---------------- raw transaction stuff-------------------------
+
+        // the address that will send the test transaction
+        const addressFrom = '0x652634051cb3c72799e724de51a5a7a8a916f986' //dummy wallet
+        const privKey = 'ea42d3b3b8418979fe176ee5821714b4587dde7edb6db4a6e019a47a5765d083'
+
+        // the destination address
+        const contractAddress = '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6' //contrct
+
+        // // get the number of transactions sent so far so we can create a fresh nonce
+        web3.eth.getTransactionCount(addressFrom).then(txCount => {
+        let data = Carbos.methods.createProject(payload.address, payload.value, payload.coordinates).encodeABI(); //get and package methods for transaction
+        let rawTx = {
+            nonce: web3.utils.toHex(txCount),
+            gasPrice: web3.utils.toHex(10e9), // 10 Gwei
+            gasLimit: web3.utils.toHex(100000),
+            to: contractAddress,
+            // "value": "0x00", //not for non-transactional contract methods
+            data: data,
+        }
+        const privateKey = new Buffer(privKey, 'hex')
+        const transaction = new Tx(rawTx)
+        transaction.sign(privateKey)
+        const serializedTx = '0x' + transaction.serialize().toString('hex')
+        web3.eth.sendSignedTransaction(serializedTx)
+          .on('transactionHash',txHash => {
+            this.setState({
+              transactionHash: txHash,
+            })
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
+            this.setState({
+              confirmations: this.state.confirmations + 1
+            })
+            Carbos.methods.getProject(tempAddress.address)
+              .call()
+                .then(res => {
+                  this.setState({
+                    parcelContractInfo: {
+                      holder: tempAddress.address,
+                      amount: res.carbonValue,
+                      geoLocation: res.geoLocation,
+                    }
+                  })
+                })
+          }).on('error', (error) => {
+            console.log(error)
+          })
+      })//txCount end
+
+
+
+        //---------------------------------------------------------------
       })
+  }
+
+  storePromiseResponse = (paylod, type) => {
+    switch(type){
+      case 'txHash':{
+        this.setState({
+          transactionHash: payload,
+        })
+        break
+      }
+      case 'confirmation':{
+        this.setState({
+          confirmations: this.state.confirmations + payload
+        })
+        break
+      }
+      case 'contractInfo':{
+        this.setState({
+          parcelContractInfo: {
+            holder: tempAddress.address,
+            amount: res.data.carbonValue,
+            geoLocation: res.data.geoLocation,
+          }
+        })
+        break
+      }
+    }
   }
 
   //the endpoint for address_if returns an array that is currently a giant string.
@@ -160,6 +246,11 @@ class NewProjectForm extends React.Component {
       deploymentDiv : {
         margin: '1em 0',
       },
+      loading:{
+        display: 'flex',
+        // flexDirection: 'column',
+        justifyContent: 'center',
+      }
     }
 
     return (
@@ -309,10 +400,40 @@ class NewProjectForm extends React.Component {
               label="Deploy Project"
             />
             <div style={styles.deploymentDiv}>
-              <h4> Deployment Information: </h4>
-              <p>{this.state.parcelContractInfo.holder}</p>
-              <p>{this.state.parcelContractInfo.amount}</p>
-              <p>{this.state.parcelContractInfo.geoLocation}</p>
+              {
+                this.state.transactionHash
+                ?
+                <div>
+                  <h4> Deployment Information: </h4>
+                  <p className="link"><a href={"https://ropsten.etherscan.io/tx/" + this.state.transactionHash}>View Transaction on Etherscan</a></p>
+                  <p>Transaction Hash: {this.state.transactionHash}</p>
+                  {
+                    this.state.parcelContractInfo.amount
+                    ?
+                    <div>
+                      <p>Number of confirmations: {this.state.confirmations}</p>
+                      <p>Contract Owner Address: {this.state.parcelContractInfo.holder}</p>
+                      <p>Potential Carbon Index: {this.state.parcelContractInfo.amount}</p>
+                      <p>GeoCode: {this.state.parcelContractInfo.geoLocation}</p>
+                    </div>
+                    :
+                    <div>
+                      <p>Waiting for Confirmation Blocks...</p>
+                      <p>(This can take anywhere from 30 seconds to 5 minutes)</p>
+                      <div className="loading-ring"></div>
+                    </div>
+                  }
+                </div>
+                :
+                <div style={styles.loading}>
+                  {
+                    (this.state.awatingBlock && !this.state.transactionHash)
+                    ?
+                    <div className="loading-ring"></div>
+                    : null
+                  }
+                </div>
+              }
             </div>
           </CardText>
         </Card>
