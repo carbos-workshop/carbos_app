@@ -84,7 +84,7 @@ def owner_city():
     owner_name = str(incoming['owner_name']).upper()
     owner_zip = str(incoming['owner_zip']).upper()
     try:
-        qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
+        qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 100;"""
         cur.execute(qry, (owner_zip, owner_name))
         rows = cur.fetchall()
         output_list = []
@@ -111,7 +111,7 @@ def owner_address():
     print(str(incoming), file=sys.stderr)
     address_id = incoming['address_id']
     try:
-        qry = """SELECT ST_AsText(ST_FlipCoordinates(ST_Transform(parcels.geom, 4326))) AS Coordinates, ST_Area(parcels.geom) AS Sqft, ruca as Ruca FROM parcels INNER JOIN ruca ON ST_Intersects(parcels.geom, ruca.geom) WHERE parcel_id=%s;"""
+        qry = """SELECT ST_AsText(ST_FlipCoordinates(ST_Transform(parcels.geom, 4326))) AS Coordinates, ST_Area(parcels.geom) AS Sqft, ruca as Ruca FROM parcels LEFT JOIN ruca ON ST_Intersects(parcels.geom, ruca.geom) WHERE parcel_id=%s;"""
         cur.execute(qry, (address_id,))
         rows = cur.fetchall()
 
