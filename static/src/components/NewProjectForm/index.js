@@ -94,14 +94,14 @@ class NewProjectForm extends React.Component {
           addressCoordinates: this.formatCoordinateStringResponse(res.data.coordinates),
           parcelData: {
             sqft: res.data.sqft,
-            carbonValue: 42, //placeholder
+            carbonValue: res.data.carbon_index, //placeholder
           }
         })
       })
   }
 
   submitProject = () => {
-    let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/'));
+    let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/Z94APTDSX23QQ338SKR8CC1GUPYS8EDDVA'));
     test_things()
       .then( res => {
         let abi = JSON.parse(res.data.result)
@@ -109,14 +109,27 @@ class NewProjectForm extends React.Component {
         let Carbos = new web3.eth.Contract(abi, '0xcCD07F547c5DA7adcb71992e33bBAa292d2B9EB6');
         let createProjectEvent = Carbos.events.ProjectInfo({}, 'latests');
 
-        // Carbos.methods.createProject(tempAddress.address, this.state.parcelData.carbonValue, /*TEMP*/ this.state.addressCoordinates[0][0] /*TEMP*/)
-        let test =  web3.utils.toChecksumAddress('0x652634051cb3c72799e724de51a5a7a8a916f986')
-        console.log(test)
+        console.log('sending', {
+          address: tempAddress.address,
+          value: this.state.parcelData.carbonValue,
+    //      coordinates:  /*TEMP*/ this.state.addressCoordinates[0][0], /*TEMP*/
+        })
+        console.log(web3)
+
+        Carbos.methods.createProject("0x920E54ba8fABf39A19B644655745786254f8ebd1", 7604.69544501745, 39.5913516676769)
+          .send({
+            from: '0x652634051Cb3c72799E724DE51a5A7A8A916f986',
+            gasPrice: '500000',
+            gas: 10000000,
+          }) .then((error,result) => { console.log(error);console.log(result) })
+
+        //let test =  web3.utils.toChecksumAddress('0x652634051cb3c72799e724de51a5a7a8a916f986')
+        //console.log(test)
         // web3.eth.getTransaction('0x874ff6b7447e9463224343522c99939bceaf9ea6a68a523f348608bd28d0df67')
         //   .then(console.log)
         Carbos.methods.getProject("0x652634051cb3c72799e724de51a5a7a8a916f986")
-          .call()
-            .then(result => { console.log(result) })
+         .call()
+           .then(result => { console.log(result) })
       })
   }
 
