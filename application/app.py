@@ -79,21 +79,27 @@ def is_token_valid():
 @app.route("/api/owner-info", methods=["POST"])
 def owner_city():
     incoming = request.get_json()
-    # incoming = {'owner_name': 'Stoltzman', 'owner_zip': '80526'} #test case :)
+    # incoming = {'owner_name': 'Smith', 'owner_zip': '80526'} #test case
     print(str(incoming), file=sys.stderr)
     owner_name = str(incoming['owner_name']).upper()
     owner_zip = str(incoming['owner_zip']).upper()
-    qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
-    cur.execute(qry, (owner_zip, owner_name))
-    rows = cur.fetchall()
-    output_list = []
-    if rows:
-        for row in rows:
-            output_dict = {}
-            output_dict['id'] = row[3]
-            output_dict['address'] = "{}, {}, {}".format(row[0],row[1],row[2])
-            output_list.append(output_dict)
+    try:
+        qry = """SELECT situsadd AS Address, sitaddcty AS City, LEFT(sitaddzip, 5) As Zipcode, parcel_id AS Parcel FROM parcels WHERE sitaddzip LIKE '%%' || %s || '%%' AND owner LIKE  '%%' || %s || '%%' LIMIT 50;"""
+        cur.execute(qry, (owner_zip, owner_name))
+        rows = cur.fetchall()
+        output_list = []
+        if rows:
+            for row in rows:
+                output_dict = {}
+                output_dict['id'] = row[3]
+                output_dict['address'] = "{}, {}, {}".format(row[0],row[1],row[2])
+                output_list.append(output_dict)
+            print(str(output_list), file=sys.stderr)
             return jsonify(output_list)
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'result': 'problem'})
+
     else:
         return jsonify(output_list)
 
@@ -104,17 +110,31 @@ def owner_address():
     # incoming = {'address_id': '9733105061'} #for testing
     print(str(incoming), file=sys.stderr)
     address_id = incoming['address_id']
-    qry = """SELECT ST_AsText(ST_FlipCoordinates(ST_Transform(geom, 4326))) AS Coordinates, ST_Area(geom) AS Sqft FROM parcels WHERE parcel_id=%s;"""
-    cur.execute(qry, (address_id,))
-    rows = cur.fetchall()
+    try:
+        qry = """SELECT ST_AsText(ST_FlipCoordinates(ST_Transform(parcels.geom, 4326))) AS Coordinates, ST_Area(parcels.geom) AS Sqft, ruca as Ruca FROM parcels INNER JOIN ruca ON ST_Intersects(parcels.geom, ruca.geom) WHERE parcel_id=%s;"""
+        cur.execute(qry, (address_id,))
+        rows = cur.fetchall()
 
-    output = {}
-    if rows:
-        data = rows[0]
-        tmp = data[0].split('MULTIPOLYGON(((')[1].replace(')','').replace('(','')
-        tmp2 = '[' + tmp.replace(',','],[').replace(' ', ',') + ']'
-        output['coordinates'] = tmp2
-        output['sqft'] = data[1]
-        return jsonify(output)
+        output = {}
+        if rows:
+            data = rows[0]
+            tmp = data[0].split('MULTIPOLYGON(((')[1].replace(')','').replace('(','')
+            tmp2 = '[' + tmp.replace(',','],[').replace(' ', ',') + ']'
+            tmp3 = tmp2.replace('[', '').split('],')
+            tmp4 = []
+            for s in tmp3:
+                tmp5 = map(float, s.replace(']','').split(','))
+                tmp4.append(list(tmp5))
+            tmp4 = [map(float, s.replace(']','').split(',')) for s in tmp3]
+            output['coordinates'] = tmp4
+            output['sqft'] = data[1]
+            output['ruca'] = float(data[2])
+            output['carbon_index'] = (11-float(data[2])) * data[1] # (11 - ruca) is because 1-10 scale of ruca is reversed
+            print(str(output), file=sys.stderr)
+            return jsonify(output)
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'result': 'problem'})
+
     else:
         return jsonify(output)
