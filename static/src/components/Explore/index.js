@@ -36,22 +36,16 @@ class Explore extends React.Component {
       };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/Z94APTDSX23QQ338SKR8CC1GUPYS8EDDVA'));
-    console.log(web3)
     get_txs_for_address()
       .then( res => {
         let projectList = []
-        // this.setState({
-        //   testTxns: res.data.results
-        // })
-        console.log(res.data)
         res.data.result.forEach( result => {
           web3.eth.getTransactionReceipt( result.hash )
             .then( txn => {
-              if (txn.status){
+              if (txn.status && txn.logs[0]){
                 let params = web3.eth.abi.decodeParameters(['address', 'uint256', 'uint256'], txn.logs[0].data)
-                // console.log(blockies.create({seed: params[0]}))
                 projectList.push(
                       {
                        address: params[0],
