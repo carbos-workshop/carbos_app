@@ -57,7 +57,7 @@ class Explore extends React.Component {
                        address: params[0],
                        value: params[1],
                        name: 'Sample Project',
-                       description: 'These are test projects generated in the development process.',
+                       description: 'This is a test project.',
                     }
                  )
               }
