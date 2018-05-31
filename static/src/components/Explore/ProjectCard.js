@@ -53,7 +53,7 @@ class ProjectCard extends React.Component {
           {this.props.description}
         </CardText>
         <CardActions expandable={true}>
-          <FlatButton label="Visit" onClick={this.handleExpand} />
+          <FlatButton label="Visit" onClick={this.handleExpand} disabled={true}/>
           {
             this.state.expanded
             ?
