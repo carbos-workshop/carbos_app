@@ -51,13 +51,11 @@ class Explore extends React.Component {
             .then( txn => {
               if (txn.status){
                 let params = web3.eth.abi.decodeParameters(['address', 'uint256', 'uint256'], txn.logs[0].data)
-                console.log(params)
-
+                // console.log(blockies.create({seed: params[0]}))
                 projectList.push(
                       {
                        address: params[0],
                        value: params[1],
-                       blockie: '',
                        name: 'Sample Project',
                        description: 'These are test projects generated in the development process.',
                     }
@@ -134,9 +132,8 @@ return (
                     index={project.index}
                     key={project.address}
                     description={project.description}
-                    name={'Project Address: ' + project.address}
-                    value={'Estimated Value: ' + project.value}
-                    blockie={project.blockie}
+                    name={project.address}
+                    value={project.value}
                   >
                   </ProjectCard>
                 ))
