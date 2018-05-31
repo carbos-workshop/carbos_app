@@ -10,7 +10,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import MapWindow from '../Map';
 import { post_address_id, post_owner_name_and_zip } from '../../utils/new_project.js';
-import { get_contract, test_things } from '../../utils/web3.js';
+import { get_abi } from '../../utils/web3.js';
 
 import Web3 from 'web3';
 import Tx from 'ethereumjs-tx'
@@ -110,7 +110,7 @@ class NewProjectForm extends React.Component {
       awatingBlock: true,
     })
     let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/Z94APTDSX23QQ338SKR8CC1GUPYS8EDDVA'));
-    test_things()
+    get_abi()
       .then( res => {
         let abi = JSON.parse(res.data.result)
         let tempAddress = web3.eth.accounts.create()
@@ -393,7 +393,7 @@ class NewProjectForm extends React.Component {
           </CardHeader>
           <CardText>
             <RaisedButton
-              disabled={false}
+              disabled={!this.state.parcelData.carbonValue}
               onClick={this.submitProject}
               primary={true}
               fullWidth={true}

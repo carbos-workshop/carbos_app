@@ -8,6 +8,10 @@ import ProjectCard from './ProjectCard';
 //for another page:
 import LeftNav from 'material-ui/Drawer';
 
+//web3
+import { get_txs_for_address } from '../../utils/web3.js';
+import Web3 from 'web3';
+
 import * as actionCreators from '../../actions/theme';
 
 function mapStateToProps(state) {
@@ -27,14 +31,42 @@ class Explore extends React.Component {
       super(props);
       this.state = {
         currentTheme: this.props.currentTheme,
-        projects: [{
-          address: '0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8',
-          value: 6.1,
-          blockie: '',
-          name: 'Sample Project',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis quis ex sed euismod. Nunc sed massa aliquet, ultricies mauris vel, venenatis nibh. Suspendisse tristique odio nec neque mollis volutpat. Proin aliquet ullamcorper facilisis. Sed pellentesque nibh vel nulla efficitur, at pulvinar dolor egestas. Nunc imperdiet ligula at orci aliquam, vel imperdiet tellus dictum. Nam accumsan dui et nulla aliquet, eu tincidunt est malesuada. Nam dignissim risus lorem, porta pellentesque tellus pulvinar non. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris enim arcu, dignissim eget lacus quis, pulvinar ornare enim.',
-        }]
+        projects: [],
+        testTxns: []
       };
+  }
+
+  componentWillMount = () => {
+    let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/Z94APTDSX23QQ338SKR8CC1GUPYS8EDDVA'));
+    console.log(web3)
+    get_txs_for_address()
+      .then( res => {
+        let projectList = []
+        // this.setState({
+        //   testTxns: res.data.results
+        // })
+        console.log(res.data)
+        res.data.result.forEach( result => {
+          web3.eth.getTransactionReceipt( result.hash )
+            .then( txn => {
+              if (txn.status){
+                let params = web3.eth.abi.decodeParameters(['address', 'uint256', 'uint256'], txn.logs[0].data)
+                // console.log(blockies.create({seed: params[0]}))
+                projectList.push(
+                      {
+                       address: params[0],
+                       value: params[1],
+                       name: 'Sample Project',
+                       description: 'These are test projects generated in the development process.',
+                    }
+                 )
+              }
+              this.setState({
+                projects: projectList
+              })
+            })
+        })
+      })
   }
 
   //returns true if light, false if dark
@@ -98,11 +130,10 @@ return (
                 this.state.projects.map( (project, index) => (
                   <ProjectCard
                     index={project.index}
-                    key={project.name}
+                    key={project.address}
                     description={project.description}
-                    name={project.name}
+                    name={project.address}
                     value={project.value}
-                    blockie={project.blockie}
                   >
                   </ProjectCard>
                 ))

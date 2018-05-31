@@ -66,7 +66,7 @@ export default class ProtectedView extends React.Component {
                     <strong style={styles.link} onClick={()=>{this.dispatchNewRoute('/new/project')}}> New Project MVP </strong>
                     or
                     <strong style={styles.link} onClick={()=>{this.dispatchNewRoute('/explore')}}> Explorer </strong>
-                    links to see some of the early features.
+                    links to see some of what we are building.
                   </h3>
                 </div>
             </div>
