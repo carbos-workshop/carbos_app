@@ -165,11 +165,15 @@ class NewProjectForm extends React.Component {
                       holder: tempAddress.address,
                       amount: res.carbonValue,
                       geoLocation: res.geoLocation,
-                    }
+                    },
+                    //awaitingBlock: false
                   })
                 })
           }).on('error', (error) => {
             console.log(error)
+            this.setState({
+              awaitingBlock: false
+            })
           })
       })//txCount end
 
@@ -393,7 +397,7 @@ class NewProjectForm extends React.Component {
           </CardHeader>
           <CardText>
             <RaisedButton
-              disabled={!this.state.parcelData.carbonValue}
+              disabled={(!this.state.parcelData.carbonValue || this.state.awatingBlock)}
               onClick={this.submitProject}
               primary={true}
               fullWidth={true}
@@ -405,7 +409,7 @@ class NewProjectForm extends React.Component {
                 ?
                 <div>
                   <h4> Deployment Information: </h4>
-                  <p className="link"><a href={"https://ropsten.etherscan.io/tx/" + this.state.transactionHash}>View Transaction on Etherscan</a></p>
+                  <p className="link"><a target="_blank" href={"https://ropsten.etherscan.io/tx/" + this.state.transactionHash}>View Transaction on Etherscan</a></p>
                   <p>Transaction Hash: {this.state.transactionHash}</p>
                   {
                     this.state.parcelContractInfo.amount
