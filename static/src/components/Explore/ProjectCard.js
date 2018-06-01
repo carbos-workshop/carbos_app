@@ -10,9 +10,8 @@ class ProjectCard extends React.Component {
 
   static propTypes = {
       name: React.PropTypes.string || 'Project Name',
-      value: React.PropTypes.number || 0.00,
+      // value: React.PropTypes.number || 0.00,
       index: React.PropTypes.number,
-      // blockie: React.PropTypes.string,
       description: React.PropTypes.string || 'description',
   };
 

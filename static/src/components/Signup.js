@@ -162,6 +162,7 @@ export default class Signup extends React.Component {
                           onClick={(e) => this.login(e)}
                         />
                         <FlatButton
+                          disabled={true}
                           style={{ marginTop: 50 }}
                           label="Login"
                           onClick={(e) => {this.swapToLoginView()}}
